@@ -6,6 +6,7 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Net;
 using System.Threading.Tasks;
 using Xunit;
@@ -30,6 +31,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests
         {
             // arrange
             const HttpStatusCode expectedResult = HttpStatusCode.OK;
+            var existingJobGroup = A.Dummy<JobGroupModel>();
             var getSummaryResponse = new List<JobGroupSummaryItemModel>
             {
                  new JobGroupSummaryItemModel
@@ -52,6 +54,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests
             A.CallTo(() => fakeLmiTransformationApiConnector.GetSummaryAsync(A<Uri>.Ignored)).Returns(getSummaryResponse);
             A.CallTo(() => fakeJobGroupDocumentService.PurgeAsync()).Returns(true);
             A.CallTo(() => fakeLmiTransformationApiConnector.GetDetailsAsync(A<Uri>.Ignored)).Returns(getDetailResponse);
+            A.CallTo(() => fakeJobGroupDocumentService.GetAsync(A<Expression<Func<JobGroupModel, bool>>>.Ignored, A<string>.Ignored)).Returns(existingJobGroup);
             A.CallTo(() => fakeJobGroupDocumentService.UpsertAsync(A<JobGroupModel>.Ignored)).Returns(HttpStatusCode.OK);
 
             // act
@@ -61,16 +64,18 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests
             A.CallTo(() => fakeLmiTransformationApiConnector.GetSummaryAsync(A<Uri>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeJobGroupDocumentService.PurgeAsync()).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeLmiTransformationApiConnector.GetDetailsAsync(A<Uri>.Ignored)).MustHaveHappened(getSummaryResponse.Count, Times.Exactly);
+            A.CallTo(() => fakeJobGroupDocumentService.GetAsync(A<Expression<Func<JobGroupModel, bool>>>.Ignored, A<string>.Ignored)).MustHaveHappened(getSummaryResponse.Count, Times.Exactly);
             A.CallTo(() => fakeJobGroupDocumentService.UpsertAsync(A<JobGroupModel>.Ignored)).MustHaveHappened(getSummaryResponse.Count, Times.Exactly);
 
             Assert.Equal(expectedResult, result);
         }
 
         [Fact]
-        public async Task JobGroupCacheRefreshServiceReloadItemIsSuccessful()
+        public async Task JobGroupCacheRefreshServiceReloadItemForExistingJobGroupIsSuccessful()
         {
             // arrange
             const HttpStatusCode expectedResult = HttpStatusCode.OK;
+            var existingJobGroup = A.Dummy<JobGroupModel>();
             var getDetailResponse = new JobGroupModel
             {
                 Soc = 2,
@@ -78,6 +83,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests
             };
 
             A.CallTo(() => fakeLmiTransformationApiConnector.GetDetailsAsync(A<Uri>.Ignored)).Returns(getDetailResponse);
+            A.CallTo(() => fakeJobGroupDocumentService.GetAsync(A<Expression<Func<JobGroupModel, bool>>>.Ignored, A<string>.Ignored)).Returns(existingJobGroup);
             A.CallTo(() => fakeJobGroupDocumentService.UpsertAsync(A<JobGroupModel>.Ignored)).Returns(HttpStatusCode.OK);
 
             // act
@@ -85,6 +91,34 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests
 
             // assert
             A.CallTo(() => fakeLmiTransformationApiConnector.GetDetailsAsync(A<Uri>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeJobGroupDocumentService.GetAsync(A<Expression<Func<JobGroupModel, bool>>>.Ignored, A<string>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeJobGroupDocumentService.UpsertAsync(A<JobGroupModel>.Ignored)).MustHaveHappenedOnceExactly();
+
+            Assert.Equal(expectedResult, result);
+        }
+
+        [Fact]
+        public async Task JobGroupCacheRefreshServiceReloadItemForNonExistingJobGroupIsSuccessful()
+        {
+            // arrange
+            const HttpStatusCode expectedResult = HttpStatusCode.OK;
+            JobGroupModel? nullJobGroup = null;
+            var getDetailResponse = new JobGroupModel
+            {
+                Soc = 2,
+                Title = "A title 2",
+            };
+
+            A.CallTo(() => fakeLmiTransformationApiConnector.GetDetailsAsync(A<Uri>.Ignored)).Returns(getDetailResponse);
+            A.CallTo(() => fakeJobGroupDocumentService.GetAsync(A<Expression<Func<JobGroupModel, bool>>>.Ignored, A<string>.Ignored)).Returns(nullJobGroup);
+            A.CallTo(() => fakeJobGroupDocumentService.UpsertAsync(A<JobGroupModel>.Ignored)).Returns(HttpStatusCode.OK);
+
+            // act
+            var result = await jobGroupCacheRefreshService.ReloadItemAsync(new Uri("https://somewhere.com", UriKind.Absolute)).ConfigureAwait(false);
+
+            // assert
+            A.CallTo(() => fakeLmiTransformationApiConnector.GetDetailsAsync(A<Uri>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeJobGroupDocumentService.GetAsync(A<Expression<Func<JobGroupModel, bool>>>.Ignored, A<string>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeJobGroupDocumentService.UpsertAsync(A<JobGroupModel>.Ignored)).MustHaveHappenedOnceExactly();
 
             Assert.Equal(expectedResult, result);
@@ -104,6 +138,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests
 
             // assert
             A.CallTo(() => fakeLmiTransformationApiConnector.GetDetailsAsync(A<Uri>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeJobGroupDocumentService.GetAsync(A<Expression<Func<JobGroupModel, bool>>>.Ignored, A<string>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeJobGroupDocumentService.UpsertAsync(A<JobGroupModel>.Ignored)).MustNotHaveHappened();
 
             Assert.Equal(expectedResult, result);

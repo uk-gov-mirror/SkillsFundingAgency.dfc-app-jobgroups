@@ -3,6 +3,7 @@ using DFC.App.JobGroups.Data.Models.JobGroupModels;
 using DFC.Compui.Cosmos.Contracts;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -53,6 +54,12 @@ namespace DFC.App.JobGroups.Services.CacheContentService
 
             if (jobGroupModel != null)
             {
+                var existingJobGroup = await jobGroupDocumentService.GetAsync(w => w.Soc == jobGroupModel.Soc, jobGroupModel.Soc.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+                if (existingJobGroup != null)
+                {
+                    jobGroupModel.Etag = existingJobGroup.Etag;
+                }
+
                 logger.LogInformation($"Upserting Job Groups item: {jobGroupModel.Soc} / {url}");
                 return await jobGroupDocumentService.UpsertAsync(jobGroupModel).ConfigureAwait(false);
             }
