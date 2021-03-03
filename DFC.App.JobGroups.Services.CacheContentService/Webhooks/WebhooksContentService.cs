@@ -35,7 +35,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.Webhooks
             this.jobGroupCacheRefreshService = jobGroupCacheRefreshService;
         }
 
-        public async Task<HttpStatusCode> ProcessContentAsync(Guid eventId, string apiEndpoint, MessageContentType messageContentType)
+        public async Task<HttpStatusCode> ProcessContentAsync(Guid eventId, string? apiEndpoint, MessageContentType messageContentType)
         {
             if (!Uri.TryCreate(apiEndpoint, UriKind.Absolute, out Uri? url))
             {

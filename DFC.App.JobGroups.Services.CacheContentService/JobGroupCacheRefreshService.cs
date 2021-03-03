@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using DFC.App.JobGroups.Data.Contracts;
+﻿using DFC.App.JobGroups.Data.Contracts;
 using DFC.App.JobGroups.Data.Models.JobGroupModels;
 using DFC.Compui.Cosmos.Contracts;
 using Microsoft.Extensions.Logging;
@@ -28,13 +27,13 @@ namespace DFC.App.JobGroups.Services.CacheContentService
 
         public async Task<HttpStatusCode> ReloadAsync(Uri url)
         {
-            await PurgeAsync().ConfigureAwait(false);
-
             logger.LogInformation($"Refreshing all Job Groups from {url}");
             var summaries = await lmiTransformationApiConnector.GetSummaryAsync(url).ConfigureAwait(false);
 
             if (summaries != null && summaries.Any())
             {
+                await PurgeAsync().ConfigureAwait(false);
+
                 foreach (var item in summaries)
                 {
                     await ReloadItemAsync(new Uri($"{url}/{item.Soc}", UriKind.Absolute)).ConfigureAwait(false);

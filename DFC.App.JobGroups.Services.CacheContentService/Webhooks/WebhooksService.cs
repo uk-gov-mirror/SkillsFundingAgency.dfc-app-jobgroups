@@ -47,7 +47,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.Webhooks
             return MessageContentType.None;
         }
 
-        public async Task<HttpStatusCode> ProcessMessageAsync(WebhookCacheOperation webhookCacheOperation, Guid eventId, Guid contentId, string apiEndpoint)
+        public async Task<HttpStatusCode> ProcessMessageAsync(WebhookCacheOperation webhookCacheOperation, Guid eventId, Guid contentId, string? apiEndpoint)
         {
             var messageContentType = DetermineMessageContentType(apiEndpoint);
             if (messageContentType == MessageContentType.None)

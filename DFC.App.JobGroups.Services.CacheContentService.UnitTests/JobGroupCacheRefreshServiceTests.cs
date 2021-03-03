@@ -49,8 +49,8 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests
                 Title = "A title 2",
             };
 
-            A.CallTo(() => fakeJobGroupDocumentService.PurgeAsync()).Returns(true);
             A.CallTo(() => fakeLmiTransformationApiConnector.GetSummaryAsync(A<Uri>.Ignored)).Returns(getSummaryResponse);
+            A.CallTo(() => fakeJobGroupDocumentService.PurgeAsync()).Returns(true);
             A.CallTo(() => fakeLmiTransformationApiConnector.GetDetailsAsync(A<Uri>.Ignored)).Returns(getDetailResponse);
             A.CallTo(() => fakeJobGroupDocumentService.UpsertAsync(A<JobGroupModel>.Ignored)).Returns(HttpStatusCode.OK);
 
@@ -58,8 +58,8 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests
             var result = await jobGroupCacheRefreshService.ReloadAsync(new Uri("https://somewhere.com", UriKind.Absolute)).ConfigureAwait(false);
 
             // assert
-            A.CallTo(() => fakeJobGroupDocumentService.PurgeAsync()).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeLmiTransformationApiConnector.GetSummaryAsync(A<Uri>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeJobGroupDocumentService.PurgeAsync()).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeLmiTransformationApiConnector.GetDetailsAsync(A<Uri>.Ignored)).MustHaveHappened(getSummaryResponse.Count, Times.Exactly);
             A.CallTo(() => fakeJobGroupDocumentService.UpsertAsync(A<JobGroupModel>.Ignored)).MustHaveHappened(getSummaryResponse.Count, Times.Exactly);
 
