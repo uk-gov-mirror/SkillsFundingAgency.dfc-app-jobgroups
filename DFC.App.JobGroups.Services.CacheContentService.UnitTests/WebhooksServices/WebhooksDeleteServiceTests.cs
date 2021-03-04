@@ -1,5 +1,10 @@
-﻿using DFC.App.JobGroups.Data.Enums;
+﻿using DFC.App.JobGroups.Data.Contracts;
+using DFC.App.JobGroups.Data.Enums;
+using DFC.App.JobGroups.Data.Models.ContentModels;
+using DFC.App.JobGroups.Services.CacheContentService.Webhooks;
+using DFC.Compui.Cosmos.Contracts;
 using FakeItEasy;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Net;
 using System.Threading.Tasks;
@@ -8,24 +13,34 @@ using Xunit;
 namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServices
 {
     [Trait("Category", "Webhooks delete service Unit Tests")]
-    public class WebhooksDeleteServiceTests : BaseWebhooksServiceTests
+    public class WebhooksDeleteServiceTests
     {
+        private readonly IDocumentService<ContentItemModel> fakeContentItemDocumentService = A.Fake<IDocumentService<ContentItemModel>>();
+
+        private readonly IJobGroupCacheRefreshService fakeJobGroupCacheRefreshService = A.Fake<IJobGroupCacheRefreshService>();
+
+        private readonly WebhooksDeleteService webhooksDeleteService;
+
+        public WebhooksDeleteServiceTests()
+        {
+            webhooksDeleteService = new WebhooksDeleteService(A.Fake<ILogger<WebhooksDeleteService>>(), fakeContentItemDocumentService, fakeJobGroupCacheRefreshService);
+        }
+
         [Fact]
         public async Task WebhooksDeleteServiceProcessDeleteForMessageContentTypeSharedContentItemReturnsSuccess()
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.OK;
-            var service = BuildWebhooksDeleteService();
 
-            A.CallTo(() => FakeContentItemDocumentService.DeleteAsync(A<Guid>.Ignored)).Returns(true);
+            A.CallTo(() => fakeContentItemDocumentService.DeleteAsync(A<Guid>.Ignored)).Returns(true);
 
             // Act
-            var result = await service.ProcessDeleteAsync(Guid.NewGuid(), ContentIdForDelete, MessageContentType.SharedContentItem).ConfigureAwait(false);
+            var result = await webhooksDeleteService.ProcessDeleteAsync(Guid.NewGuid(), Guid.NewGuid(), MessageContentType.SharedContentItem).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => FakeContentItemDocumentService.DeleteAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => FakeJobGroupCacheRefreshService.PurgeAsync()).MustNotHaveHappened();
-            A.CallTo(() => FakeJobGroupCacheRefreshService.DeleteAsync(A<Guid>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeContentItemDocumentService.DeleteAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeJobGroupCacheRefreshService.PurgeAsync()).MustNotHaveHappened();
+            A.CallTo(() => fakeJobGroupCacheRefreshService.DeleteAsync(A<Guid>.Ignored)).MustNotHaveHappened();
 
             Assert.Equal(expectedResult, result);
         }
@@ -35,17 +50,16 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.OK;
-            var service = BuildWebhooksDeleteService();
 
-            A.CallTo(() => FakeJobGroupCacheRefreshService.PurgeAsync()).Returns(true);
+            A.CallTo(() => fakeJobGroupCacheRefreshService.PurgeAsync()).Returns(true);
 
             // Act
-            var result = await service.ProcessDeleteAsync(Guid.NewGuid(), JobGroupIdForDelete, MessageContentType.JobGroup).ConfigureAwait(false);
+            var result = await webhooksDeleteService.ProcessDeleteAsync(Guid.NewGuid(), Guid.NewGuid(), MessageContentType.JobGroup).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => FakeContentItemDocumentService.DeleteAsync(A<Guid>.Ignored)).MustNotHaveHappened();
-            A.CallTo(() => FakeJobGroupCacheRefreshService.PurgeAsync()).MustHaveHappenedOnceExactly();
-            A.CallTo(() => FakeJobGroupCacheRefreshService.DeleteAsync(A<Guid>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeContentItemDocumentService.DeleteAsync(A<Guid>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeJobGroupCacheRefreshService.PurgeAsync()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeJobGroupCacheRefreshService.DeleteAsync(A<Guid>.Ignored)).MustNotHaveHappened();
 
             Assert.Equal(expectedResult, result);
         }
@@ -55,17 +69,16 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.OK;
-            var service = BuildWebhooksDeleteService();
 
-            A.CallTo(() => FakeJobGroupCacheRefreshService.DeleteAsync(A<Guid>.Ignored)).Returns(true);
+            A.CallTo(() => fakeJobGroupCacheRefreshService.DeleteAsync(A<Guid>.Ignored)).Returns(true);
 
             // Act
-            var result = await service.ProcessDeleteAsync(Guid.NewGuid(), JobGroupIdForDelete, MessageContentType.JobGroupItem).ConfigureAwait(false);
+            var result = await webhooksDeleteService.ProcessDeleteAsync(Guid.NewGuid(), Guid.NewGuid(), MessageContentType.JobGroupItem).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => FakeContentItemDocumentService.DeleteAsync(A<Guid>.Ignored)).MustNotHaveHappened();
-            A.CallTo(() => FakeJobGroupCacheRefreshService.PurgeAsync()).MustNotHaveHappened();
-            A.CallTo(() => FakeJobGroupCacheRefreshService.DeleteAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeContentItemDocumentService.DeleteAsync(A<Guid>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeJobGroupCacheRefreshService.PurgeAsync()).MustNotHaveHappened();
+            A.CallTo(() => fakeJobGroupCacheRefreshService.DeleteAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
 
             Assert.Equal(expectedResult, result);
         }
@@ -75,15 +88,14 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.BadRequest;
-            var service = BuildWebhooksDeleteService();
 
             // Act
-            var result = await service.ProcessDeleteAsync(Guid.NewGuid(), ContentIdForDelete, MessageContentType.None).ConfigureAwait(false);
+            var result = await webhooksDeleteService.ProcessDeleteAsync(Guid.NewGuid(), Guid.NewGuid(), MessageContentType.None).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => FakeContentItemDocumentService.DeleteAsync(A<Guid>.Ignored)).MustNotHaveHappened();
-            A.CallTo(() => FakeJobGroupCacheRefreshService.PurgeAsync()).MustNotHaveHappened();
-            A.CallTo(() => FakeJobGroupCacheRefreshService.DeleteAsync(A<Guid>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeContentItemDocumentService.DeleteAsync(A<Guid>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeJobGroupCacheRefreshService.PurgeAsync()).MustNotHaveHappened();
+            A.CallTo(() => fakeJobGroupCacheRefreshService.DeleteAsync(A<Guid>.Ignored)).MustNotHaveHappened();
 
             Assert.Equal(expectedResult, result);
         }
@@ -94,15 +106,14 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             // Arrange
             const bool expectedResponse = true;
             const HttpStatusCode expectedResult = HttpStatusCode.OK;
-            var service = BuildWebhooksDeleteService();
 
-            A.CallTo(() => FakeContentItemDocumentService.DeleteAsync(A<Guid>.Ignored)).Returns(expectedResponse);
+            A.CallTo(() => fakeContentItemDocumentService.DeleteAsync(A<Guid>.Ignored)).Returns(expectedResponse);
 
             // Act
-            var result = await service.DeleteContentAsync(ContentIdForDelete).ConfigureAwait(false);
+            var result = await webhooksDeleteService.DeleteContentAsync(Guid.NewGuid()).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => FakeContentItemDocumentService.DeleteAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeContentItemDocumentService.DeleteAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
 
             Assert.Equal(expectedResult, result);
         }
@@ -113,15 +124,14 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             // Arrange
             const bool expectedResponse = false;
             const HttpStatusCode expectedResult = HttpStatusCode.NoContent;
-            var service = BuildWebhooksDeleteService();
 
-            A.CallTo(() => FakeContentItemDocumentService.DeleteAsync(A<Guid>.Ignored)).Returns(expectedResponse);
+            A.CallTo(() => fakeContentItemDocumentService.DeleteAsync(A<Guid>.Ignored)).Returns(expectedResponse);
 
             // Act
-            var result = await service.DeleteContentAsync(ContentIdForDelete).ConfigureAwait(false);
+            var result = await webhooksDeleteService.DeleteContentAsync(Guid.NewGuid()).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => FakeContentItemDocumentService.DeleteAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeContentItemDocumentService.DeleteAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
 
             Assert.Equal(expectedResult, result);
         }
@@ -132,15 +142,14 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             // Arrange
             const bool expectedResponse = true;
             const HttpStatusCode expectedResult = HttpStatusCode.OK;
-            var service = BuildWebhooksDeleteService();
 
-            A.CallTo(() => FakeJobGroupCacheRefreshService.DeleteAsync(A<Guid>.Ignored)).Returns(expectedResponse);
+            A.CallTo(() => fakeJobGroupCacheRefreshService.DeleteAsync(A<Guid>.Ignored)).Returns(expectedResponse);
 
             // Act
-            var result = await service.DeleteSocItemAsync(JobGroupIdForDelete).ConfigureAwait(false);
+            var result = await webhooksDeleteService.DeleteSocItemAsync(Guid.NewGuid()).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => FakeJobGroupCacheRefreshService.DeleteAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeJobGroupCacheRefreshService.DeleteAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
 
             Assert.Equal(expectedResult, result);
         }
@@ -151,15 +160,14 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             // Arrange
             const bool expectedResponse = false;
             const HttpStatusCode expectedResult = HttpStatusCode.NoContent;
-            var service = BuildWebhooksDeleteService();
 
-            A.CallTo(() => FakeJobGroupCacheRefreshService.DeleteAsync(A<Guid>.Ignored)).Returns(expectedResponse);
+            A.CallTo(() => fakeJobGroupCacheRefreshService.DeleteAsync(A<Guid>.Ignored)).Returns(expectedResponse);
 
             // Act
-            var result = await service.DeleteSocItemAsync(JobGroupIdForDelete).ConfigureAwait(false);
+            var result = await webhooksDeleteService.DeleteSocItemAsync(Guid.NewGuid()).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => FakeJobGroupCacheRefreshService.DeleteAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeJobGroupCacheRefreshService.DeleteAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
 
             Assert.Equal(expectedResult, result);
         }
@@ -170,15 +178,14 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             // Arrange
             const bool expectedResponse = true;
             const HttpStatusCode expectedResult = HttpStatusCode.OK;
-            var service = BuildWebhooksDeleteService();
 
-            A.CallTo(() => FakeJobGroupCacheRefreshService.PurgeAsync()).Returns(expectedResponse);
+            A.CallTo(() => fakeJobGroupCacheRefreshService.PurgeAsync()).Returns(expectedResponse);
 
             // Act
-            var result = await service.PurgeSocAsync().ConfigureAwait(false);
+            var result = await webhooksDeleteService.PurgeSocAsync().ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => FakeJobGroupCacheRefreshService.PurgeAsync()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeJobGroupCacheRefreshService.PurgeAsync()).MustHaveHappenedOnceExactly();
 
             Assert.Equal(expectedResult, result);
         }
@@ -189,15 +196,14 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             // Arrange
             const bool expectedResponse = false;
             const HttpStatusCode expectedResult = HttpStatusCode.NoContent;
-            var service = BuildWebhooksDeleteService();
 
-            A.CallTo(() => FakeJobGroupCacheRefreshService.PurgeAsync()).Returns(expectedResponse);
+            A.CallTo(() => fakeJobGroupCacheRefreshService.PurgeAsync()).Returns(expectedResponse);
 
             // Act
-            var result = await service.PurgeSocAsync().ConfigureAwait(false);
+            var result = await webhooksDeleteService.PurgeSocAsync().ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => FakeJobGroupCacheRefreshService.PurgeAsync()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeJobGroupCacheRefreshService.PurgeAsync()).MustHaveHappenedOnceExactly();
 
             Assert.Equal(expectedResult, result);
         }
