@@ -69,7 +69,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService
 
         public async Task<bool> PurgeAsync()
         {
-            logger.LogInformation("Purging all Job Groups from");
+            logger.LogInformation("Purging all Job Groups");
             return await jobGroupDocumentService.PurgeAsync().ConfigureAwait(false);
         }
 

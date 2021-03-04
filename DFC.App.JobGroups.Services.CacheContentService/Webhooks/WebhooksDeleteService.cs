@@ -1,13 +1,9 @@
-﻿using DFC.App.JobGroups.Data;
-using DFC.App.JobGroups.Data.Contracts;
+﻿using DFC.App.JobGroups.Data.Contracts;
 using DFC.App.JobGroups.Data.Enums;
-using DFC.App.JobGroups.Data.Models.CmsApiModels;
 using DFC.App.JobGroups.Data.Models.ContentModels;
 using DFC.Compui.Cosmos.Contracts;
-using DFC.Content.Pkg.Netcore.Data.Contracts;
 using Microsoft.Extensions.Logging;
 using System;
-using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 

@@ -52,7 +52,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.Webhooks
             var messageContentType = DetermineMessageContentType(apiEndpoint);
             if (messageContentType == MessageContentType.None)
             {
-                logger.LogError($"Event Id: {eventId} got unknown message content type - {messageContentType}");
+                logger.LogError($"Event Id: {eventId} got unknown message content type - {messageContentType} - {apiEndpoint}");
                 return HttpStatusCode.BadRequest;
             }
 
