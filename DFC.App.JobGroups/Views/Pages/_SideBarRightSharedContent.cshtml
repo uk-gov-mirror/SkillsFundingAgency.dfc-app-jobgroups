@@ -1,0 +1,6 @@
+﻿@model SharedContentViewModel
+
+@if (Model.Markup?.Value != null)
+{
+    @Html.Raw(Model.Markup.Value)
+}

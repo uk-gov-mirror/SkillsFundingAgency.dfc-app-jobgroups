@@ -1,0 +1,19 @@
+﻿@model List<BreakdownYearValueViewModel>
+
+<table class="govuk-table resposive-table" aria-label="@ViewBag.ColumnHeading breakdown">
+    <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">@ViewBag.ColumnHeading</th>
+            <th scope="col" class="govuk-table__header">Employment</th>
+        </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+        @foreach (var breakdown in Model)
+        {
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell">@Html.Raw(breakdown.Name)</td>
+                <td class="govuk-table__cell">@breakdown.Employment.ToString("#,##0", System.Globalization.CultureInfo.InvariantCulture)</td>
+            </tr>
+        }
+    </tbody>
+</table>
