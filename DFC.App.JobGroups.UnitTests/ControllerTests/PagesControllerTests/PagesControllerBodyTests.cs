@@ -71,7 +71,7 @@ namespace DFC.App.JobGroups.UnitTests.ControllerTests.PagesControllerTests
         [Theory]
         [MemberData(nameof(JsonMediaTypes))]
         [MemberData(nameof(HtmlMediaTypes))]
-        public async Task PagesControllerBodyReturnsNoContentWhenNoData(string mediaTypeName)
+        public async Task PagesControllerBodyReturnsNotFoundWhenNoData(string mediaTypeName)
         {
             // Arrange
             JobGroupModel? nullJobGroupModel = null;
@@ -86,9 +86,9 @@ namespace DFC.App.JobGroups.UnitTests.ControllerTests.PagesControllerTests
             // Assert
             A.CallTo(() => FakeJobGroupDocumentService.GetAsync(A<Expression<Func<JobGroupModel, bool>>>.Ignored, A<string>.Ignored)).MustHaveHappenedOnceExactly();
 
-            var statusResult = Assert.IsType<NoContentResult>(result);
+            var statusResult = Assert.IsType<NotFoundResult>(result);
 
-            A.Equals((int)HttpStatusCode.NoContent, statusResult.StatusCode);
+            A.Equals((int)HttpStatusCode.NotFound, statusResult.StatusCode);
 
             controller.Dispose();
         }
