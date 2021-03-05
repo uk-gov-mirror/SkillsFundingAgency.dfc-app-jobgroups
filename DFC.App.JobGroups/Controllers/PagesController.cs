@@ -169,7 +169,7 @@ namespace DFC.App.JobGroups.Controllers
 
             logger.LogWarning($"{nameof(Body)} has returned no content for: {socRequest.Soc}");
 
-            return NoContent();
+            return NotFound();
         }
 
         [HttpGet]
