@@ -16,13 +16,13 @@
                     if (document.Soc == null)
                     {
                         <li>
-                            <a href="/@Model.LocalPath/@document.Title">@document.Title</a>
+                            <a class="govuk-link" href="/@Model.Path/@document.Title">@document.Title</a>
                         </li>
                     }
                     else
                     {
                         <li>
-                            <a href="/@Model.LocalPath/@document.Soc/document">@document.Title</a>
+                            <a class="govuk-link" href="/@Model.Path/@document.Soc/document">@document.Soc - @document.Title</a>
                         </li>
                     }
                 }

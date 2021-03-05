@@ -1,0 +1,17 @@
+﻿@model IndexViewModel
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        @if (Model.Documents?.Count() > 0)
+        {
+            <ul class="govuk-list">
+                @foreach (var document in Model.Documents)
+                {
+                    <li>
+                        <a class="govuk-link" href="/@Model.Path/@document.Soc">@document.Soc - @document.Title</a>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+</div>
