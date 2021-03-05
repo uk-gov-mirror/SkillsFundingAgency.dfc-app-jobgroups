@@ -28,9 +28,9 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
         [Theory]
         [InlineData(null, MessageContentType.None)]
         [InlineData("", MessageContentType.None)]
-        [InlineData("https://someehwre.com/api/sharedcontent/" + Constants.SharedContentAskAdviserItemId, MessageContentType.SharedContentItem)]
-        [InlineData("https://someehwre.com/api/" + Constants.ApiForJobGroups, MessageContentType.JobGroup)]
-        [InlineData("https://someehwre.com/api/" + Constants.ApiForJobGroups + "/", MessageContentType.JobGroupItem)]
+        [InlineData("https://somewhere.com/api/sharedcontent/" + Constants.SharedContentAskAdviserItemId, MessageContentType.SharedContentItem)]
+        [InlineData("https://somewhere.com/api/" + Constants.ApiForJobGroups, MessageContentType.JobGroup)]
+        [InlineData("https://somewhere.com/api/" + Constants.ApiForJobGroups + "/", MessageContentType.JobGroupItem)]
         public void WebhooksServiceDetermineMessageContentTypeReturnsExpected(string? apiEndpoint, MessageContentType expectedResponse)
         {
             // Arrange
