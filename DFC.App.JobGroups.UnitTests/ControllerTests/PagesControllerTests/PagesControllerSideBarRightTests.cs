@@ -1,3 +1,4 @@
+using DFC.App.JobGroups.Data.Models.ContentModels;
 using DFC.App.JobGroups.Data.Models.JobGroupModels;
 using DFC.App.JobGroups.Models;
 using DFC.App.JobGroups.ViewModels;
@@ -22,12 +23,14 @@ namespace DFC.App.JobGroups.UnitTests.ControllerTests.PagesControllerTests
             // Arrange
             var socRequestModel = new SocRequestModel { Soc = 3231, FromJobProfileCanonicalName = "a-job-profile", };
             var dummyJobGroupModel = A.Dummy<JobGroupModel>();
+            var dummyContentItemModel = A.Dummy<ContentItemModel>();
             var controller = BuildPagesController(mediaTypeName);
             var dummySideBarRightViewModel = A.Dummy<SideBarRightViewModel>();
             dummySideBarRightViewModel.JobProfiles = new List<JobProfileViewModel> { new JobProfileViewModel { CanonicalName = socRequestModel.FromJobProfileCanonicalName, Title = "A title" }, };
 
             A.CallTo(() => FakeJobGroupDocumentService.GetAsync(A<Expression<Func<JobGroupModel, bool>>>.Ignored, A<string>.Ignored)).Returns(dummyJobGroupModel);
             A.CallTo(() => FakeMapper.Map<SideBarRightViewModel>(A<JobGroupModel>.Ignored)).Returns(dummySideBarRightViewModel);
+            A.CallTo(() => FakeSharedContentDocumentService.GetByIdAsync(A<Guid>.Ignored, A<string>.Ignored)).Returns(dummyContentItemModel);
 
             // Act
             var result = await controller.SideBarRight(socRequestModel).ConfigureAwait(false);
@@ -35,6 +38,7 @@ namespace DFC.App.JobGroups.UnitTests.ControllerTests.PagesControllerTests
             // Assert
             A.CallTo(() => FakeJobGroupDocumentService.GetAsync(A<Expression<Func<JobGroupModel, bool>>>.Ignored, A<string>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => FakeMapper.Map<SideBarRightViewModel>(A<JobGroupModel>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => FakeSharedContentDocumentService.GetByIdAsync(A<Guid>.Ignored, A<string>.Ignored)).MustHaveHappenedOnceExactly();
 
             var viewResult = Assert.IsType<ViewResult>(result);
             _ = Assert.IsAssignableFrom<SideBarRightViewModel>(viewResult.ViewData.Model);
@@ -50,6 +54,7 @@ namespace DFC.App.JobGroups.UnitTests.ControllerTests.PagesControllerTests
         {
             // Arrange
             var dummyJobGroupModel = A.Dummy<JobGroupModel>();
+            var dummyContentItemModel = A.Dummy<ContentItemModel>();
             var controller = BuildPagesController(mediaTypeName);
             var socRequestModel = new SocRequestModel { Soc = 3231, FromJobProfileCanonicalName = "a-job-profile", };
             var dummySideBarRightViewModel = A.Dummy<SideBarRightViewModel>();
@@ -57,6 +62,7 @@ namespace DFC.App.JobGroups.UnitTests.ControllerTests.PagesControllerTests
 
             A.CallTo(() => FakeJobGroupDocumentService.GetAsync(A<Expression<Func<JobGroupModel, bool>>>.Ignored, A<string>.Ignored)).Returns(dummyJobGroupModel);
             A.CallTo(() => FakeMapper.Map<SideBarRightViewModel>(A<JobGroupModel>.Ignored)).Returns(dummySideBarRightViewModel);
+            A.CallTo(() => FakeSharedContentDocumentService.GetByIdAsync(A<Guid>.Ignored, A<string>.Ignored)).Returns(dummyContentItemModel);
 
             // Act
             var result = await controller.SideBarRight(socRequestModel).ConfigureAwait(false);
@@ -64,6 +70,7 @@ namespace DFC.App.JobGroups.UnitTests.ControllerTests.PagesControllerTests
             // Assert
             A.CallTo(() => FakeJobGroupDocumentService.GetAsync(A<Expression<Func<JobGroupModel, bool>>>.Ignored, A<string>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => FakeMapper.Map<SideBarRightViewModel>(A<JobGroupModel>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => FakeSharedContentDocumentService.GetByIdAsync(A<Guid>.Ignored, A<string>.Ignored)).MustHaveHappenedOnceExactly();
 
             var jsonResult = Assert.IsType<OkObjectResult>(result);
             _ = Assert.IsAssignableFrom<SideBarRightViewModel>(jsonResult.Value);
@@ -88,6 +95,8 @@ namespace DFC.App.JobGroups.UnitTests.ControllerTests.PagesControllerTests
 
             // Assert
             A.CallTo(() => FakeJobGroupDocumentService.GetAsync(A<Expression<Func<JobGroupModel, bool>>>.Ignored, A<string>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => FakeMapper.Map<SideBarRightViewModel>(A<JobGroupModel>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => FakeSharedContentDocumentService.GetByIdAsync(A<Guid>.Ignored, A<string>.Ignored)).MustNotHaveHappened();
 
             var statusResult = Assert.IsType<NoContentResult>(result);
 
@@ -102,12 +111,14 @@ namespace DFC.App.JobGroups.UnitTests.ControllerTests.PagesControllerTests
         {
             // Arrange
             var dummyJobGroupModel = A.Dummy<JobGroupModel>();
+            var dummyContentItemModel = A.Dummy<ContentItemModel>();
             var controller = BuildPagesController(mediaTypeName);
             var socRequestModel = new SocRequestModel { Soc = 3231, FromJobProfileCanonicalName = "a-job-profile", };
             var dummySideBarRightViewModel = A.Dummy<SideBarRightViewModel>();
 
             A.CallTo(() => FakeJobGroupDocumentService.GetAsync(A<Expression<Func<JobGroupModel, bool>>>.Ignored, A<string>.Ignored)).Returns(dummyJobGroupModel);
             A.CallTo(() => FakeMapper.Map<SideBarRightViewModel>(A<JobGroupModel>.Ignored)).Returns(dummySideBarRightViewModel);
+            A.CallTo(() => FakeSharedContentDocumentService.GetByIdAsync(A<Guid>.Ignored, A<string>.Ignored)).Returns(dummyContentItemModel);
 
             // Act
             var result = await controller.SideBarRight(socRequestModel).ConfigureAwait(false);
@@ -115,6 +126,7 @@ namespace DFC.App.JobGroups.UnitTests.ControllerTests.PagesControllerTests
             // Assert
             A.CallTo(() => FakeJobGroupDocumentService.GetAsync(A<Expression<Func<JobGroupModel, bool>>>.Ignored, A<string>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => FakeMapper.Map<SideBarRightViewModel>(A<JobGroupModel>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => FakeSharedContentDocumentService.GetByIdAsync(A<Guid>.Ignored, A<string>.Ignored)).MustHaveHappenedOnceExactly();
 
             var statusResult = Assert.IsType<StatusCodeResult>(result);
 

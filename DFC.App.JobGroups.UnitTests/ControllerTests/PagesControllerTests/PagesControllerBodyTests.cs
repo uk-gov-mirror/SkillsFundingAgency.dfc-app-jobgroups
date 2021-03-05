@@ -71,7 +71,7 @@ namespace DFC.App.JobGroups.UnitTests.ControllerTests.PagesControllerTests
         [Theory]
         [MemberData(nameof(JsonMediaTypes))]
         [MemberData(nameof(HtmlMediaTypes))]
-        public async Task PagesControllerBodyReturnsNoContentWhenNoData(string mediaTypeName)
+        public async Task PagesControllerBodyReturnsNotFoundWhenNoData(string mediaTypeName)
         {
             // Arrange
             JobGroupModel? nullJobGroupModel = null;
