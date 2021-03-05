@@ -99,6 +99,22 @@ namespace DFC.App.JobGroups.Controllers
         }
 
         [HttpGet]
+        [Route("pages/htmlhead")]
+        public IActionResult IndexHtmlHead()
+        {
+            var viewModel = new HtmlHeadViewModel
+            {
+                Title = "Job groups | National Careers Service",
+                Description = "Index of all job-groups",
+                CanonicalUrl = new Uri($"{Request.GetBaseAddress()}{RegistrationPath}/", UriKind.RelativeOrAbsolute),
+            };
+
+            logger.LogInformation($"{nameof(IndexHtmlHead)} has succeeded");
+
+            return this.NegotiateContentResult(viewModel);
+        }
+
+        [HttpGet]
         [Route("pages/{soc}/htmlhead")]
         [Route("pages/{soc}/{fromJobProfileCanonicalName}/htmlhead")]
         public async Task<IActionResult> HtmlHead(SocRequestModel socRequest)
@@ -118,6 +134,17 @@ namespace DFC.App.JobGroups.Controllers
             logger.LogWarning($"{nameof(HtmlHead)} has returned no content for: {socRequest.Soc}");
 
             return NoContent();
+        }
+
+        [HttpGet]
+        [Route("pages/breadcrumb")]
+        public IActionResult IndexBreadcrumb()
+        {
+            var viewModel = BuildBreadcrumb(RegistrationPath, null);
+
+            logger.LogInformation($"{nameof(IndexBreadcrumb)} has succeeded");
+
+            return this.NegotiateContentResult(viewModel);
         }
 
         [HttpGet]
@@ -152,6 +179,31 @@ namespace DFC.App.JobGroups.Controllers
         }
 
         [HttpGet]
+        [Route("pages/body")]
+        public async Task<IActionResult> IndexBody()
+        {
+            var viewModel = new IndexViewModel()
+            {
+                Path = RegistrationPath,
+            };
+            var jobGroupModels = await jobGroupDocumentService.GetAllAsync().ConfigureAwait(false);
+
+            if (jobGroupModels != null)
+            {
+                viewModel.Documents = (from a in jobGroupModels.OrderBy(o => o.Title)
+                                       select mapper.Map<IndexDocumentViewModel>(a)).ToList();
+
+                logger.LogInformation($"{nameof(IndexBody)} has succeeded");
+            }
+            else
+            {
+                logger.LogWarning($"{nameof(IndexBody)} has returned with no results");
+            }
+
+            return this.NegotiateContentResult(viewModel);
+        }
+
+        [HttpGet]
         [Route("pages/{soc}/body")]
         [Route("pages/{soc}/{fromJobProfileCanonicalName}/body")]
         public async Task<IActionResult> Body(SocRequestModel socRequest)
@@ -169,7 +221,24 @@ namespace DFC.App.JobGroups.Controllers
 
             logger.LogWarning($"{nameof(Body)} has returned no content for: {socRequest.Soc}");
 
-            return NoContent();
+            return NotFound();
+        }
+
+        [HttpGet]
+        [Route("pages/sidebarright")]
+        public async Task<IActionResult> IndexSideBarRight()
+        {
+            var viewModel = new SideBarRightViewModel();
+            var sharedContentAskAdviser = await sharedContentDocumentService.GetByIdAsync(Guid.Parse(Constants.SharedContentAskAdviserItemId)).ConfigureAwait(false);
+
+            viewModel.SharedContent = new SharedContentViewModel
+            {
+                Markup = new HtmlString(sharedContentAskAdviser?.Content),
+            };
+
+            logger.LogInformation($"{nameof(IndexSideBarRight)} has succeeded");
+
+            return this.NegotiateContentResult(viewModel);
         }
 
         [HttpGet]
