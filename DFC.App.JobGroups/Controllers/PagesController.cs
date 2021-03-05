@@ -48,7 +48,7 @@ namespace DFC.App.JobGroups.Controllers
         {
             var viewModel = new IndexViewModel()
             {
-                LocalPath = LocalPath,
+                Path = LocalPath,
                 Documents = new List<IndexDocumentViewModel>()
                 {
                     new IndexDocumentViewModel { Title = HealthController.HealthViewCanonicalName },

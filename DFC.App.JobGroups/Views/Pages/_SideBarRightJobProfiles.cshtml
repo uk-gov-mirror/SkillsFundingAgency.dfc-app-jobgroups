@@ -1,14 +1,16 @@
 ﻿@model List<JobProfileViewModel>
 
-<div class="job-profile-related">
-    <h3 class="govuk-heading-m">Job profiles in this job group</h3>
-    <ul class="list list-big">
-        @if (Model != null && Model.Any())
-        {
-            foreach (var jobProfile in Model)
-            {
-                <li><a href="/job-profiles/@jobProfile.CanonicalName">@Html.Raw(jobProfile.Title)</a></li>
-            }
-        }
-    </ul>
-</div>
+@if (Model != null && Model.Any())
+{
+    <div class="job-profile-sidebar">
+        <div class="job-profile-related">
+            <h3 class="govuk-heading-m">Job profiles in this job group</h3>
+            <ul class="list list-big">
+                @foreach (var jobProfile in Model)
+                {
+                    <li><a class="govuk-link" href="/job-profiles/@jobProfile.CanonicalName">@Html.Raw(jobProfile.Title)</a></li>
+                }
+            </ul>
+        </div>
+    </div>
+}
