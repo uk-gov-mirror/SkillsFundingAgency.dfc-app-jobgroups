@@ -5,7 +5,7 @@ variables:
   value: $(WebAppPrefix)-as
 - name: cosmosDbCollectionName
   value: job-groups
-- name: sharedContentcosmosDbCollectionName
+- name: sharedContentDbCollectionName
   value: shared-content
 - name: ResourceGroup
   value: $(WebAppPrefix)-rg

@@ -171,9 +171,7 @@
                         "value": "[variables('ApiName')]"
                     }
                 }
-            },
-            "dependsOn": [
-            ]
+            }
         },
         {
             "apiVersion": "2017-05-10",
@@ -472,10 +470,7 @@
                         "value": "[variables('cosmosDbCollectionPartitionKey')]"
                     }
                 }
-            },
-            "dependsOn": [
-                "[variables('sharedcontentCosmosDbDatabaseName')]"
-            ]
+            }
         },
         {
             "apiVersion": "2017-05-10",
@@ -505,10 +500,7 @@
                         "value": "[variables('sharedcontentCosmosDbCollectionPartitionKey')]"
                     }
                 }
-            },
-            "dependsOn": [
-                "[variables('sharedcontentCosmosDbDatabaseName')]"
-            ]
+            }
         },
         {
             "apiVersion": "2019-05-01",
