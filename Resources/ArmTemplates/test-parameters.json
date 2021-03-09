@@ -32,17 +32,11 @@
         "cosmosDbCollectionName": {
             "value": "a-test-collection"
         },
-        "sharedcontentCosmosDbCollectionName": {
+        "sharedcontentDbCollectionName": {
             "value": "b-test-collection"
         },
         "CosmosDbResourceGroup": {
             "value": "dfc-dev-app-sharedresources-rg"
-        },
-        "jobgroupsAppDatabaseNeedsCreation": {
-            "value": true
-        },
-        "jobgroupsAppDatabaseThroughput": {
-            "value": 2
         },
         "sharedcontentAppDatabaseNeedsCreation": {
             "value": true

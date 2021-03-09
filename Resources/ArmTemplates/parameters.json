@@ -44,14 +44,8 @@
         "cosmosDbCollectionName": {
             "value": "__cosmosDbCollectionName__"
         },
-        "sharedcontentCosmosDbCollectionName": {
-            "value": "__sharedcontentCosmosDbCollectionName__"
-        },
-        "jobgroupsAppDatabaseNeedsCreation": {
-            "value": __CosmosDbDatabaseDoesntExist__
-        },
-        "jobgroupsAppDatabaseThroughput": {
-            "value": __jobgroupsAppDatabaseThroughput__
+        "sharedcontentDbCollectionName": {
+            "value": "__sharedcontentDbCollectionName__"
         },
         "sharedcontentAppDatabaseNeedsCreation": {
             "value": __CosmosDbDatabaseDoesntExist__
