@@ -52,10 +52,10 @@
                 "description": "The name of the collection to create"
             }
         },
-        "sharedcontentAppDatabaseNeedsCreation": {
+        "jobgroupsAppDatabaseNeedsCreation": {
             "type": "bool"
         },
-        "sharedcontentAppDatabaseThroughput": {
+        "jobgroupsAppDatabaseThroughput": {
             "type": "int"
         },
         "enableAlerts": {
@@ -138,7 +138,7 @@
         "buildingBlocksDfcBaseUrl": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
         "cosmosDbCollectionPartitionKey": "/PartitionKey",
         "sharedcontentCosmosDbCollectionPartitionKey": "/PartitionKey",
-        "sharedcontentCosmosDbDatabaseName": "dfc-app-jobgroups",
+        "CosmosDbDatabaseName": "dfc-app-jobgroups",
         "cosmosDbEndpoint": "[concat('https://', parameters('cosmosDbName'), '.documents.azure.com:443/')]",
         "resourcePrefix": "[tolower(concat('dfc-', parameters('Environment'), '-app-jobgroups'))]",
         "webAppName": "[concat(variables('ResourcePrefix'), '-as')]",
@@ -278,7 +278,7 @@
                             },
                             {
                                 "name": "Configuration__CosmosDbConnections__JobGroup__DatabaseId",
-                                "value": "[variables('sharedcontentcosmosDbDatabaseName')]"
+                                "value": "[variables('cosmosDbDatabaseName')]"
                             },
                             {
                                 "name": "Configuration__CosmosDbConnections__JobGroup__CollectionId",
@@ -298,7 +298,7 @@
                             },
                             {
                                 "name": "Configuration__CosmosDbConnections__SharedContent__DatabaseId",
-                                "value": "[variables('sharedcontentcosmosDbDatabaseName')]"
+                                "value": "[variables('cosmosDbDatabaseName')]"
                             },
                             {
                                 "name": "Configuration__CosmosDbConnections__SharedContent__CollectionId",
@@ -413,7 +413,7 @@
             ]
         },
         {
-            "name": "[variables('sharedcontentCosmosDbDatabaseName')]",
+            "name": "[variables('CosmosDbDatabaseName')]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[parameters('CosmosDbResourceGroup')]",
             "apiVersion": "2017-05-10",
@@ -428,16 +428,16 @@
                         "value": "[parameters('CosmosDbName')]"
                     },
                     "databaseName": {
-                        "value": "[variables('sharedcontentCosmosDbDatabaseName')]"
+                        "value": "[variables('CosmosDbDatabaseName')]"
                     },
                     "useSharedRequestUnits": {
                         "value": true
                     },
                     "offerThroughput": {
-                        "value": "[parameters('sharedcontentAppDatabaseThroughput')]"
+                        "value": "[parameters('jobgroupsAppDatabaseThroughput')]"
                     },
                     "databaseNeedsCreation": {
-                        "value": "[parameters('sharedcontentAppDatabaseNeedsCreation')]"
+                        "value": "[parameters('jobgroupsAppDatabaseNeedsCreation')]"
                     }
                 }
             }
@@ -458,7 +458,7 @@
                         "value": "[parameters('cosmosDbName')]"
                     },
                     "databaseName": {
-                        "value": "[variables('sharedcontentcosmosDbDatabaseName')]"
+                        "value": "[variables('cosmosDbDatabaseName')]"
                     },
                     "collectionName": {
                         "value": "[parameters('cosmosDbCollectionName')]"
@@ -470,7 +470,10 @@
                         "value": "[variables('cosmosDbCollectionPartitionKey')]"
                     }
                 }
-            }
+            },
+            "dependsOn": [
+                "[variables('CosmosDbDatabaseName')]"
+            ]
         },
         {
             "apiVersion": "2017-05-10",
@@ -488,7 +491,7 @@
                         "value": "[parameters('cosmosDbName')]"
                     },
                     "databaseName": {
-                        "value": "[variables('sharedcontentcosmosDbDatabaseName')]"
+                        "value": "[variables('cosmosDbDatabaseName')]"
                     },
                     "collectionName": {
                         "value": "[parameters('sharedcontentDbCollectionName')]"
@@ -500,7 +503,10 @@
                         "value": "[variables('sharedcontentCosmosDbCollectionPartitionKey')]"
                     }
                 }
-            }
+            },
+            "dependsOn": [
+                "[variables('CosmosDbDatabaseName')]"
+            ]
         },
         {
             "apiVersion": "2019-05-01",

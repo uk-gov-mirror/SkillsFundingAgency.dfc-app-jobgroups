@@ -38,10 +38,10 @@
         "CosmosDbResourceGroup": {
             "value": "dfc-dev-app-sharedresources-rg"
         },
-        "sharedcontentAppDatabaseNeedsCreation": {
+        "jobgroupsAppDatabaseNeedsCreation": {
             "value": true
         },
-        "sharedcontentAppDatabaseThroughput": {
+        "jobgroupsAppDatabaseThroughput": {
             "value": 2
         },
         "enableAlerts": {

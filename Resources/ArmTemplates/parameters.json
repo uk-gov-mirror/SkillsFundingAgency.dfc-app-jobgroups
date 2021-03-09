@@ -47,11 +47,11 @@
         "sharedcontentDbCollectionName": {
             "value": "__sharedcontentDbCollectionName__"
         },
-        "sharedcontentAppDatabaseNeedsCreation": {
+        "jobgroupsAppDatabaseNeedsCreation": {
             "value": __CosmosDbDatabaseDoesntExist__
         },
-        "sharedcontentAppDatabaseThroughput": {
-            "value": __sharedcontentAppDatabaseThroughput__
+        "jobgroupsAppDatabaseThroughput": {
+            "value": __jobgroupsAppDatabaseThroughput__
         },
         "enableAlerts": {
             "value": __EnableAzureMonitorAlerting__
