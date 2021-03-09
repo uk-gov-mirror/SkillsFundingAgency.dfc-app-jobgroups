@@ -47,8 +47,6 @@ variables:
   value: 2
 - name: clientAffinity
   value: false
-- name: jobgroupsAppDatabaseThroughput
-  value: 400
 - name: sharedcontentAppDatabaseThroughput
   value: 400
 - name: ExceptionCountThreshold
