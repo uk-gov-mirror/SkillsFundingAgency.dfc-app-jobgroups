@@ -62,6 +62,12 @@
         "EventGridPublishClientOptionsApiEndpoint": {
             "value": "a url"
         },
+        "SubscriptionSettingsFilterIncludeEventTypes3": {
+            "value": "value"
+        },
+        "SubscriptionSettingsFilterIncludeEventTypes4": {
+            "value": "anothervalue"
+        },
         "SubscriptionSettingsFilterPropertyContainsFiltersValues0": {
             "value": "anothervalue"
         },

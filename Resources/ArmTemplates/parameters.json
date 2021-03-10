@@ -71,6 +71,12 @@
         "EventGridPublishClientOptionsApiEndpoint": {
             "value": "__EventGridPublishClientOptionsApiEndpoint__"
         },
+        "SubscriptionSettingsFilterIncludeEventTypes3": {
+            "value": "__SubscriptionSettingsFilterIncludeEventTypes3__"
+        },
+        "SubscriptionSettingsFilterIncludeEventTypes4": {
+            "value": "__SubscriptionSettingsFilterIncludeEventTypes4__"
+        },
         "SubscriptionSettingsFilterPropertyContainsFiltersValues0": {
             "value": "__SubscriptionSettingsFilterPropertyContainsFiltersValues0__"
         },
