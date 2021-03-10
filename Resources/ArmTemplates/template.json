@@ -41,16 +41,10 @@
             "type": "string"
         },
         "cosmosDbCollectionName": {
-            "type": "string",
-            "metadata": {
-                "description": "The name of the collection to create"
-            }
+            "type": "string"
         },
         "sharedcontentDbCollectionName": {
-            "type": "string",
-            "metadata": {
-                "description": "The name of the collection to create"
-            }
+            "type": "string"
         },
         "jobgroupsAppDatabaseNeedsCreation": {
             "type": "bool"
@@ -59,10 +53,7 @@
             "type": "int"
         },
         "enableAlerts": {
-            "type": "bool",
-            "metadata": {
-                "description": "Enable or disable alerting"
-            }
+            "type": "bool"
         },
         "SubscriptionSettingsEndpoint": {
             "type": "string"
@@ -470,10 +461,7 @@
                         "value": "[variables('cosmosDbCollectionPartitionKey')]"
                     }
                 }
-            },
-            "dependsOn": [
-                "[variables('CosmosDbDatabaseName')]"
-            ]
+            }
         },
         {
             "apiVersion": "2017-05-10",
@@ -503,10 +491,7 @@
                         "value": "[variables('sharedcontentCosmosDbCollectionPartitionKey')]"
                     }
                 }
-            },
-            "dependsOn": [
-                "[variables('CosmosDbDatabaseName')]"
-            ]
+            }
         },
         {
             "apiVersion": "2019-05-01",
@@ -638,10 +623,7 @@
                         "value": "[resourceId('Microsoft.Web/serverFarms', variables('AppServicePlanName'))]"
                     }
                 }
-            },
-            "dependsOn": [
-                "[variables('AppServicePlanName')]"
-            ]
+            }
         },
         {
             "apiVersion": "2019-05-01",
@@ -691,10 +673,7 @@
                         "value": "[resourceId('Microsoft.Web/serverFarms', variables('AppServicePlanName'))]"
                     }
                 }
-            },
-            "dependsOn": [
-                "[variables('AppServicePlanName')]"
-            ]
+            }
         }
     ],
     "outputs": {
