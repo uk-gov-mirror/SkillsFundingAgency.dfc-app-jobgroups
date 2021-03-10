@@ -50,7 +50,7 @@ variables:
 - name: aspSize
   value: 2
 - name: clientAffinity
-  value: true
+  value: false
 - name: jobgroupsAppDatabaseThroughput
   value: 400
 - name: ExceptionCountThreshold
