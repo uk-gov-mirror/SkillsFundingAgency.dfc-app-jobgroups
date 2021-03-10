@@ -77,9 +77,6 @@
         "EventGridSubjectPrefix": {
             "value": "anothervalue"
         },
-        "AppRegistryClientOptionsBaseAddress": {
-            "value": "anothervalue"
-        },
         "SummaryEndpoint": {
             "value": "anothervalue"
         },

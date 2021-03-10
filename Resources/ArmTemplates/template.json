@@ -85,9 +85,6 @@
         "EventGridSubjectPrefix": {
             "type": "string"
         },
-        "AppRegistryClientOptionsBaseAddress": {
-            "type": "string"
-        },
         "SummaryEndpoint": {
             "type": "string"
         },
@@ -362,14 +359,6 @@
                             {
                                 "name": "EventGridPublishClientOptions__ApiEndpoint",
                                 "value": "[parameters('EventGridPublishClientOptionsApiEndpoint')]"
-                            },
-                            {
-                                "name": "AppRegistryClientOptions__ApiKey",
-                                "value": "[parameters('apimCompositeApiKey')]"
-                            },
-                            {
-                                "name": "AppRegistryClientOptions__BaseAddress",
-                                "value": "[parameters('AppRegistryClientOptionsBaseAddress')]"
                             },
                             {
                                 "name": "SubscriptionSettings__Filter__PropertyContainsFilters__0__Key",
