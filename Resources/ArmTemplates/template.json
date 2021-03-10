@@ -85,7 +85,7 @@
         "SubscriptionSettingsFilterIncludeEventTypes4": {
             "type": "string"
         },
-        "SubscriptionSettingsFilterProperyContainsFiltersValues0": {
+        "SubscriptionSettingsFilterPropertyContainsFiltersValues0": {
             "type": "string"
         },
         "ApplicationName": {
@@ -390,7 +390,7 @@
                             },
                             {
                                 "name": "SubscriptionSettings__Filter__PropertyContainsFilters__0__Values",
-                                "value": "[parameters('SubscriptionSettingsFilterProperyContainsFiltersValues0')]"
+                                "value": "[parameters('SubscriptionSettingsFilterPropertyContainsFiltersValues0')]"
                             },
                             {
                                 "name": "SubscriptionSettings__Filter__PropertyContainsFilters__1__Values",

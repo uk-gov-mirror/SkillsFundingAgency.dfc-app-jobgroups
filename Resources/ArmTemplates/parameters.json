@@ -36,7 +36,10 @@
             "value": "__appSharedResourceGroup__"
         },
         "environment": {
-            "value": "__ReleaseEnvironmentName__"
+            "value": "__ReleaseEnvironmentName__",
+            "metadata": {
+                "comment": "Bug in tokenisation task prevents referencing Release.EnvironmentName directly.  https://github.com/TotalALM/VSTS-Tasks/issues/29"
+            }
         },
         "cosmosDbCollectionName": {
             "value": "__cosmosDbCollectionName__"
@@ -74,8 +77,8 @@
         "SubscriptionSettingsFilterIncludeEventTypes4": {
             "value": "__SubscriptionSettingsFilterIncludeEventTypes4__"
         },
-        "SubscriptionSettingsFilterProperyContainsFiltersValues0": {
-            "value": "__SubscriptionSettingsFilterProperyContainsFiltersValues0__"
+        "SubscriptionSettingsFilterPropertyContainsFiltersValues0": {
+            "value": "__SubscriptionSettingsFilterPropertyContainsFiltersValues0__"
         },
         "ApplicationName": {
             "value": "__ApplicationName__"
