@@ -39,11 +39,13 @@ namespace DFC.App.JobGroups.Services.CacheContentService
                 {
                     await ReloadItemAsync(new Uri($"{url}/{item.Soc}", UriKind.Absolute)).ConfigureAwait(false);
                 }
+
+                logger.LogInformation($"Refreshed all Job Groups from {url}");
+
+                return HttpStatusCode.OK;
             }
 
-            logger.LogInformation($"Refreshed all Job Groups from {url}");
-
-            return HttpStatusCode.OK;
+            return HttpStatusCode.NoContent;
         }
 
         public async Task<HttpStatusCode> ReloadItemAsync(Uri url)
