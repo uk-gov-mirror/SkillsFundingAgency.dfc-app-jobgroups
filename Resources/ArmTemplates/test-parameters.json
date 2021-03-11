@@ -53,31 +53,16 @@
         "apimCompositeApiKey": {
             "value": "fake-key-mate"
         },
-        "EventGridAegSasKey": {
-            "value": "a key"
-        },
-        "EventGridTopicUrl": {
-            "value": "a url"
-        },
-        "EventGridPublishClientOptionsApiEndpoint": {
-            "value": "a url"
-        },
         "SubscriptionSettingsFilterIncludeEventTypes3": {
             "value": "value"
         },
         "SubscriptionSettingsFilterIncludeEventTypes4": {
             "value": "anothervalue"
         },
-        "SubscriptionSettingsFilterPropertyContainsFiltersValues0": {
+        "SubscriptionSettingsFilterPropertyContainsFilters0Values0": {
             "value": "anothervalue"
         },
         "ApplicationName": {
-            "value": "anothervalue"
-        },
-        "EventGridSubjectPrefix": {
-            "value": "anothervalue"
-        },
-        "SummaryEndpoint": {
             "value": "anothervalue"
         },
         "contentUrl": {

@@ -13,14 +13,8 @@ variables:
   value: DFC.App.JobGroups
 - name: PageRegistrationFile
   value: registration.json
-- name: EventGridPublishClientOptionsApiEndpoint
-  value: https://$(AppServiceName).$(appServiceDomain)/api/jobgroups
 - name: ApplicationName
   value: DFC-App-JobGroups
-- name: EventGridSubjectPrefix
-  value: /$(ApplicationName)/
-- name: SummaryEndpoint
-  value: /jobgroups
 - name: contentUrl
   value: $(ContentApiAddress)/api/execute
 - name: subscriptionUrl
@@ -35,7 +29,7 @@ variables:
   value: https://$(AppServiceName).$(appServiceDomain)
 - name: WebAppPrefix
   value: dfc-dev-app-jobgroups
-- name: SubscriptionSettingsFilterPropertyContainsFiltersValues0
+- name: SubscriptionSettingsFilterPropertyContainsFilters0Values0
   value: 2c9da1b3-3529-4834-afc9-9cd741e59788
 - name: EnableAzureMonitorAlerting
   value: true

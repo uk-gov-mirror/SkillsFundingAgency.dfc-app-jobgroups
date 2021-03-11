@@ -61,31 +61,16 @@
         "apimCompositeApiKey": {
             "type": "securestring"
         },
-        "EventGridAegSasKey": {
-            "type": "string"
-        },
-        "EventGridTopicUrl": {
-            "type": "string"
-        },
-        "EventGridPublishClientOptionsApiEndpoint": {
-            "type": "string"
-        },
         "SubscriptionSettingsFilterIncludeEventTypes3": {
             "type": "string"
         },
         "SubscriptionSettingsFilterIncludeEventTypes4": {
             "type": "string"
         },
-        "SubscriptionSettingsFilterPropertyContainsFiltersValues0": {
+        "SubscriptionSettingsFilterPropertyContainsFilters0Values0": {
             "type": "string"
         },
         "ApplicationName": {
-            "type": "string"
-        },
-        "EventGridSubjectPrefix": {
-            "type": "string"
-        },
-        "SummaryEndpoint": {
             "type": "string"
         },
         "contentUrl": {
@@ -305,10 +290,6 @@
                                 "value": "[parameters('contentUrl')]"
                             },
                             {
-                                "name": "CmsApiClientOptions__SummaryEndpoint",
-                                "value": "[parameters('SummaryEndpoint')]"
-                            },
-                            {
                                 "name": "Configuration__ApplicationName",
                                 "value": "[parameters('ApplicationName')]"
                             },
@@ -337,28 +318,8 @@
                                 "value": "[concat(parameters('SubscriptionSettingsEndpoint'),'/api/webhook/ReceiveEvents?subscription-key=',parameters('apimCompositeApiKey'))]"
                             },
                             {
-                                "name": "SubscriptionSettings__SubscriptionRegistrationDelay",
-                                "value": "00:02:00"
-                            },
-                            {
                                 "name": "SubscriptionSettings__SubscriptionServiceEndpoint",
                                 "value": "[concat(parameters('subscriptionUrl'),'/api/Execute')]"
-                            },
-                            {
-                                "name": "EventGridPublishClientOptions__TopicKey",
-                                "value": "[parameters('EventGridAegSasKey')]"
-                            },
-                            {
-                                "name": "EventGridPublishClientOptions__TopicEndpoint",
-                                "value": "[parameters('EventGridTopicUrl')]"
-                            },
-                            {
-                                "name": "EventGridPublishClientOptions__SubjectPrefix",
-                                "value": "[parameters('EventGridSubjectPrefix')]"
-                            },
-                            {
-                                "name": "EventGridPublishClientOptions__ApiEndpoint",
-                                "value": "[parameters('EventGridPublishClientOptionsApiEndpoint')]"
                             },
                             {
                                 "name": "SubscriptionSettings__Filter__PropertyContainsFilters__0__Key",
@@ -369,11 +330,11 @@
                                 "value": "subject"
                             },
                             {
-                                "name": "SubscriptionSettings__Filter__PropertyContainsFilters__0__Values",
-                                "value": "[parameters('SubscriptionSettingsFilterPropertyContainsFiltersValues0')]"
+                                "name": "SubscriptionSettings__Filter__PropertyContainsFilters__0__Values__0",
+                                "value": "[parameters('SubscriptionSettingsFilterPropertyContainsFilters0Values0')]"
                             },
                             {
-                                "name": "SubscriptionSettings__Filter__PropertyContainsFilters__1__Values",
+                                "name": "SubscriptionSettings__Filter__PropertyContainsFilters__1__Values__0",
                                 "value": "/dfc-api-lmi-transformation/"
                             },
                             {

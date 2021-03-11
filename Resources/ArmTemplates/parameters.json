@@ -62,32 +62,17 @@
         "apimCompositeApiKey": {
             "value": "__apimCompositeKey__"
         },
-        "EventGridAegSasKey": {
-            "value": "__EventGridAegSasKey__"
-        },
-        "EventGridTopicUrl": {
-            "value": "__EventGridTopicUrl__"
-        },
-        "EventGridPublishClientOptionsApiEndpoint": {
-            "value": "__EventGridPublishClientOptionsApiEndpoint__"
-        },
         "SubscriptionSettingsFilterIncludeEventTypes3": {
             "value": "__SubscriptionSettingsFilterIncludeEventTypes3__"
         },
         "SubscriptionSettingsFilterIncludeEventTypes4": {
             "value": "__SubscriptionSettingsFilterIncludeEventTypes4__"
         },
-        "SubscriptionSettingsFilterPropertyContainsFiltersValues0": {
-            "value": "__SubscriptionSettingsFilterPropertyContainsFiltersValues0__"
+        "SubscriptionSettingsFilterPropertyContainsFilters0Values0": {
+            "value": "__SubscriptionSettingsFilterPropertyContainsFilters0Values0__"
         },
         "ApplicationName": {
             "value": "__ApplicationName__"
-        },
-        "EventGridSubjectPrefix": {
-            "value": "__EventGridSubjectPrefix__"
-        },
-        "SummaryEndpoint": {
-            "value": "__SummaryEndpoint__"
         },
         "contentUrl": {
             "value": "__contentUrl__"
