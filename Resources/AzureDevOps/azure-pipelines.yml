@@ -81,7 +81,7 @@ stages:
         TestSuffix: UnitTests
 
 - stage: DeployToDevAppJobGroups
-  condition: and(eq(dependencies.Build.result,'Succeeded'), ne(variables['Build.Reason'], 'PullRequest'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/dev'))
   displayName: Deploy to DEV_AppJobGroups
   variables:
   - group: dfc-shared-all
@@ -125,7 +125,7 @@ stages:
       SpecificationPath: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.OpenApiDocs"
 
 - stage: DeployToDevDraftAppJobGroups
-  condition: and(eq(dependencies.Build.result,'Succeeded'), ne(variables['Build.Reason'], 'PullRequest'))
+  condition: succeeded()
   displayName: Deploy to DEV-DRAFT_AppJobGroups
   variables:
   - group: dfc-shared-all
@@ -170,7 +170,7 @@ stages:
       SpecificationPath: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.OpenApiDocs"
 
 - stage: DeployToSitAppJobGroups
-  condition: and(eq(dependencies.Build.result,'Succeeded'), ne(variables['Build.Reason'], 'PullRequest'))
+  condition: succeeded()
   displayName: Deploy to SIT_AppJobGroups
   variables:
   - group: dfc-shared-all
@@ -214,7 +214,7 @@ stages:
       SpecificationPath: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.OpenApiDocs"
 
 - stage: DeployToSitDraftAppJobGroups
-  condition: and(eq(dependencies.Build.result,'Succeeded'), ne(variables['Build.Reason'], 'PullRequest'))
+  condition: succeeded()
   displayName: Deploy to SIT-DRAFT_AppJobGroups
   variables:
   - group: dfc-shared-all
