@@ -37,7 +37,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService
 
                 foreach (var item in summaries)
                 {
-                    await ReloadItemAsync(new Uri($"{url}/{item.Soc}", UriKind.Absolute)).ConfigureAwait(false);
+                    await ReloadItemAsync(new Uri($"{url}/{item.Id}", UriKind.Absolute)).ConfigureAwait(false);
                 }
 
                 logger.LogInformation($"Refreshed all Job Groups from {url}");
