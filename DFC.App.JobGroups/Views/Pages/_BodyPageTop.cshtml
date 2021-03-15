@@ -1,7 +1,7 @@
 ﻿@model BodyViewModel
 
-<h1 class="govuk-heading-xl">Job group: @Html.Raw(Model.Title)</h1>
-<p class="govuk-body">@Html.Raw(Model.Description)</p>
+<h1 class="govuk-heading-xl">Job group: @Html.Raw(Model?.Title)</h1>
+<p class="govuk-body">@Html.Raw(Model?.Description)</p>
 <h2 class="govuk-heading-m govuk-!-margin-top-5">How this information can help you</h2>
 <p class="govuk-body">If you know what is happening in the labour market, it can help you to make realistic decisions about:</p>
 <ul class="govuk-list govuk-list--bullet">
