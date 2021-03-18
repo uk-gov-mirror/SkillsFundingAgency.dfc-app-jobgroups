@@ -326,15 +326,11 @@
                                 "value": "subject"
                             },
                             {
-                                "name": "SubscriptionSettings__Filter__PropertyContainsFilters__1__Key",
-                                "value": "subject"
-                            },
-                            {
                                 "name": "SubscriptionSettings__Filter__PropertyContainsFilters__0__Values__0",
                                 "value": "[parameters('SubscriptionSettingsFilterPropertyContainsFilters0Values0')]"
                             },
                             {
-                                "name": "SubscriptionSettings__Filter__PropertyContainsFilters__1__Values__0",
+                                "name": "SubscriptionSettings__Filter__PropertyContainsFilters__0__Values__1",
                                 "value": "/dfc-api-lmi-transformation/"
                             },
                             {
