@@ -93,13 +93,3 @@ steps:
     ScriptPath: '$(Agent.BuildDirectory)/s/dfc-devops/PSCoreScripts/Set-ApimPolicy.ps1'
     ScriptArguments: '-PolicyScope operation -ApimResourceGroup ${{ parameters.SharedResourceGroupName }} -ApimServiceName ${{ parameters.ApimServiceName }} -PolicyFilePath "$(Agent.BuildDirectory)/dfc.app.jobgroups.apimpolicies/ApimPolicy-IsolatedAppServiceAsEventGridWebhookEndpoint.xml" -ApiId ${{ parameters.ApiId }} -OperationId post-api-webhook-receiveevents'
     azurePowerShellVersion: LatestVersion
-
-- task: AzurePowerShell@5
-  displayName: 'Send a post request to /subscription'
-  inputs:
-    azureSubscription: '${{ parameters.AzureSubscription }}'
-    ScriptType: InlineScript
-    Inline: |
-     Invoke-WebRequest -Uri ${{ parameters.SubscriptionPosturi }} -Method POST
-    errorActionPreference: continue
-    azurePowerShellVersion: LatestVersion

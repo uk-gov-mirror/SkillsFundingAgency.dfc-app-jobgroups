@@ -334,6 +334,10 @@
                                 "value": "/dfc-api-lmi-transformation/"
                             },
                             {
+                                "name": "SubscriptionSettings__SubscriptionRegistrationDelay",
+                                "value": "00:02:00"
+                            },
+                            {
                                 "name": "WEBSITE_RUN_FROM_PACKAGE",
                                 "value": "1"
                             },
