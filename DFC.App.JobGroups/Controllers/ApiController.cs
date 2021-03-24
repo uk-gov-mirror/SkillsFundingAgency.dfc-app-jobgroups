@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace DFC.App.Jobgroups.Controllers
@@ -30,10 +31,13 @@ namespace DFC.App.Jobgroups.Controllers
         [HttpGet("summary")]
         public async Task<IEnumerable<JobGroupSummaryItemModel>?> Get()
         {
+            logger.LogInformation("Retrieving job-group summaries");
+
             var jobGroups = await documentService.GetAllAsync().ConfigureAwait(false);
 
             if (jobGroups == null)
             {
+                logger.LogWarning("No job-group summaries available");
                 return default;
             }
 
@@ -45,12 +49,14 @@ namespace DFC.App.Jobgroups.Controllers
         [HttpGet("detail/{socId}")]
         public async Task<JobGroupModel?> Get(Guid socId)
         {
+            logger.LogInformation($"Retrieving job-group detail for: {socId}");
             return await documentService.GetByIdAsync(socId).ConfigureAwait(false);
         }
 
         [HttpGet("detail/soc/{soc}")]
         public async Task<JobGroupModel?> Get(int soc)
-        {
+{
+            logger.LogInformation($"Retrieving job-group detail for: {soc}");
             return await documentService.GetAsync(w => w.Soc == soc, soc.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
         }
     }
