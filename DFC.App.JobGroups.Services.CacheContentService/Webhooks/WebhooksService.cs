@@ -47,7 +47,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.Webhooks
             return MessageContentType.None;
         }
 
-        public async Task<HttpStatusCode> ProcessMessageAsync(WebhookCacheOperation webhookCacheOperation, Guid eventId, Guid contentId, string? apiEndpoint)
+        public async Task<HttpStatusCode> ProcessMessageAsync(bool isDraft, WebhookCacheOperation webhookCacheOperation, Guid eventId, Guid contentId, string? apiEndpoint)
         {
             var messageContentType = DetermineMessageContentType(apiEndpoint);
             if (messageContentType == MessageContentType.None)
@@ -62,7 +62,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.Webhooks
                     return await webhooksDeleteService.ProcessDeleteAsync(eventId, contentId, messageContentType).ConfigureAwait(false);
 
                 case WebhookCacheOperation.CreateOrUpdate:
-                    return await webhooksContentService.ProcessContentAsync(eventId, apiEndpoint, messageContentType).ConfigureAwait(false);
+                    return await webhooksContentService.ProcessContentAsync(isDraft, eventId, apiEndpoint, messageContentType).ConfigureAwait(false);
             }
 
             logger.LogError($"Event Id: {eventId} got unknown cache operation - {webhookCacheOperation}");

@@ -7,6 +7,6 @@ namespace DFC.App.JobGroups.Data.Contracts
 {
     public interface IWebhooksService
     {
-        Task<HttpStatusCode> ProcessMessageAsync(WebhookCacheOperation webhookCacheOperation, Guid eventId, Guid contentId, string? apiEndpoint);
+        Task<HttpStatusCode> ProcessMessageAsync(bool isDraft, WebhookCacheOperation webhookCacheOperation, Guid eventId, Guid contentId, string? apiEndpoint);
     }
 }

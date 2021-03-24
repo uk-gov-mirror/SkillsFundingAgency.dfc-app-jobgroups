@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace DFC.App.JobGroups.Data.Models.LmiTransformationApiModels
+namespace DFC.App.JobGroups.Data.Models
 {
     [ExcludeFromCodeCoverage]
     public class JobGroupSummaryItemModel

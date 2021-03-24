@@ -13,27 +13,28 @@ using Xunit;
 
 namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.ConnectorTests
 {
-    [Trait("Category", "LMI Transformation API connector Unit Tests")]
-    public class LmiTransformationApiConnectorTests
+    [Trait("Category", "Job group API connector Unit Tests")]
+    public class JobGroupApiConnectorTests
     {
-        private readonly ILogger<LmiTransformationApiConnector> fakeLogger = A.Fake<ILogger<LmiTransformationApiConnector>>();
+        private readonly ILogger<JobGroupApiConnector> fakeLogger = A.Fake<ILogger<JobGroupApiConnector>>();
         private readonly HttpClient httpClient = new HttpClient();
         private readonly IApiDataConnector fakeApiDataConnector = A.Fake<IApiDataConnector>();
-        private readonly ILmiTransformationApiConnector lmiTransformationApiConnector;
+        private readonly IJobGroupApiConnector jobGroupApiConnector;
 
-        public LmiTransformationApiConnectorTests()
+        public JobGroupApiConnectorTests()
         {
-            lmiTransformationApiConnector = new LmiTransformationApiConnector(fakeLogger, httpClient, fakeApiDataConnector);
+            jobGroupApiConnector = new JobGroupApiConnector(fakeLogger, httpClient, fakeApiDataConnector);
         }
 
         [Fact]
-        public async Task LmiTransformationApiConnectorTestsGetSummaryReturnsSuccess()
+        public async Task JobGroupApiConnectorTestsGetSummaryReturnsSuccess()
         {
             // arrange
             var expectedResults = new List<JobGroupSummaryItemModel>
             {
                 new JobGroupSummaryItemModel
                 {
+                    Id = Guid.NewGuid(),
                     Soc = 3543,
                     Title = "A title",
                 },
@@ -42,7 +43,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.ConnectorTest
             A.CallTo(() => fakeApiDataConnector.GetAsync<IList<JobGroupSummaryItemModel>>(A<HttpClient>.Ignored, A<Uri>.Ignored)).Returns(expectedResults);
 
             // act
-            var results = await lmiTransformationApiConnector.GetSummaryAsync(new Uri("https://somewhere.com", UriKind.Absolute)).ConfigureAwait(false);
+            var results = await jobGroupApiConnector.GetSummaryAsync(new Uri("https://somewhere.com", UriKind.Absolute)).ConfigureAwait(false);
 
             // assert
             A.CallTo(() => fakeApiDataConnector.GetAsync<IList<JobGroupSummaryItemModel>>(A<HttpClient>.Ignored, A<Uri>.Ignored)).MustHaveHappenedOnceExactly();
@@ -53,11 +54,12 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.ConnectorTest
         }
 
         [Fact]
-        public async Task LmiTransformationApiConnectorTestsGetDetailsReturnsSuccess()
+        public async Task JobGroupApiConnectorTestsGetDetailsReturnsSuccess()
         {
             // arrange
             var expectedResult = new JobGroupModel
             {
+                Id = Guid.NewGuid(),
                 Soc = 3543,
                 Title = "A title",
             };
@@ -65,7 +67,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.ConnectorTest
             A.CallTo(() => fakeApiDataConnector.GetAsync<JobGroupModel>(A<HttpClient>.Ignored, A<Uri>.Ignored)).Returns(expectedResult);
 
             // act
-            var result = await lmiTransformationApiConnector.GetDetailsAsync(new Uri("https://somewhere.com", UriKind.Absolute)).ConfigureAwait(false);
+            var result = await jobGroupApiConnector.GetDetailsAsync(new Uri("https://somewhere.com", UriKind.Absolute)).ConfigureAwait(false);
 
             // assert
             A.CallTo(() => fakeApiDataConnector.GetAsync<JobGroupModel>(A<HttpClient>.Ignored, A<Uri>.Ignored)).MustHaveHappenedOnceExactly();

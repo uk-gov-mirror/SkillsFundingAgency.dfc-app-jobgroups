@@ -27,11 +27,13 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
 
         private readonly IJobGroupCacheRefreshService fakeJobGroupCacheRefreshService = A.Fake<IJobGroupCacheRefreshService>();
 
+        private readonly IJobGroupPublishedRefreshService fakeJobGroupPublishedRefreshService = A.Fake<IJobGroupPublishedRefreshService>();
+
         private readonly WebhooksContentService webhooksContentService;
 
         public WebhooksContentServiceTests()
         {
-            webhooksContentService = new WebhooksContentService(A.Fake<ILogger<WebhooksContentService>>(), fakeMapper, fakeCmsApiService, fakeContentItemDocumentService, fakeJobGroupCacheRefreshService);
+            webhooksContentService = new WebhooksContentService(A.Fake<ILogger<WebhooksContentService>>(), fakeMapper, fakeCmsApiService, fakeContentItemDocumentService, fakeJobGroupCacheRefreshService, fakeJobGroupPublishedRefreshService);
         }
 
         [Fact]
@@ -45,7 +47,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             A.CallTo(() => fakeContentItemDocumentService.UpsertAsync(A<ContentItemModel>.Ignored)).Returns(expectedResult);
 
             // Act
-            var result = await webhooksContentService.ProcessContentAsync(Guid.NewGuid(), "https://somewhere.com", MessageContentType.SharedContentItem).ConfigureAwait(false);
+            var result = await webhooksContentService.ProcessContentAsync(false, Guid.NewGuid(), "https://somewhere.com", MessageContentType.SharedContentItem).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeJobGroupCacheRefreshService.ReloadAsync(A<Uri>.Ignored)).MustNotHaveHappened();
@@ -53,12 +55,14 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             A.CallTo(() => fakeCmsApiService.GetItemAsync<CmsApiSharedContentModel>(A<Uri>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeMapper.Map<ContentItemModel>(A<CmsApiSharedContentModel>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeContentItemDocumentService.UpsertAsync(A<ContentItemModel>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadAsync(A<Uri>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadItemAsync(A<Uri>.Ignored)).MustNotHaveHappened();
 
             Assert.Equal(expectedResult, result);
         }
 
         [Fact]
-        public async Task WebhooksContentServiceProcessContentForJobGroupReturnsSuccess()
+        public async Task WebhooksContentServiceProcessContentForJobGroupForDraftReturnsSuccess()
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.OK;
@@ -66,7 +70,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             A.CallTo(() => fakeJobGroupCacheRefreshService.ReloadAsync(A<Uri>.Ignored)).Returns(expectedResult);
 
             // Act
-            var result = await webhooksContentService.ProcessContentAsync(Guid.NewGuid(), "https://somewhere.com", MessageContentType.JobGroup).ConfigureAwait(false);
+            var result = await webhooksContentService.ProcessContentAsync(true, Guid.NewGuid(), "https://somewhere.com", MessageContentType.JobGroup).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeJobGroupCacheRefreshService.ReloadAsync(A<Uri>.Ignored)).MustHaveHappenedOnceExactly();
@@ -74,12 +78,37 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             A.CallTo(() => fakeCmsApiService.GetItemAsync<CmsApiSharedContentModel>(A<Uri>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeMapper.Map<ContentItemModel>(A<CmsApiSharedContentModel>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeContentItemDocumentService.UpsertAsync(A<ContentItemModel>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadAsync(A<Uri>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadItemAsync(A<Uri>.Ignored)).MustNotHaveHappened();
 
             Assert.Equal(expectedResult, result);
         }
 
         [Fact]
-        public async Task WebhooksContentServiceProcessContentForJobGroupItemReturnsSuccess()
+        public async Task WebhooksContentServiceProcessContentForJobGroupForPublishedReturnsSuccess()
+        {
+            // Arrange
+            const HttpStatusCode expectedResult = HttpStatusCode.OK;
+
+            A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadAsync(A<Uri>.Ignored)).Returns(expectedResult);
+
+            // Act
+            var result = await webhooksContentService.ProcessContentAsync(false, Guid.NewGuid(), "https://somewhere.com", MessageContentType.JobGroup).ConfigureAwait(false);
+
+            // Assert
+            A.CallTo(() => fakeJobGroupCacheRefreshService.ReloadAsync(A<Uri>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeJobGroupCacheRefreshService.ReloadItemAsync(A<Uri>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeCmsApiService.GetItemAsync<CmsApiSharedContentModel>(A<Uri>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeMapper.Map<ContentItemModel>(A<CmsApiSharedContentModel>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeContentItemDocumentService.UpsertAsync(A<ContentItemModel>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadAsync(A<Uri>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadItemAsync(A<Uri>.Ignored)).MustNotHaveHappened();
+
+            Assert.Equal(expectedResult, result);
+        }
+
+        [Fact]
+        public async Task WebhooksContentServiceProcessContentForJobGroupItemForDraftReturnsSuccess()
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.OK;
@@ -87,7 +116,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             A.CallTo(() => fakeJobGroupCacheRefreshService.ReloadItemAsync(A<Uri>.Ignored)).Returns(expectedResult);
 
             // Act
-            var result = await webhooksContentService.ProcessContentAsync(Guid.NewGuid(), "https://somewhere.com", MessageContentType.JobGroupItem).ConfigureAwait(false);
+            var result = await webhooksContentService.ProcessContentAsync(true, Guid.NewGuid(), "https://somewhere.com", MessageContentType.JobGroupItem).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeJobGroupCacheRefreshService.ReloadAsync(A<Uri>.Ignored)).MustNotHaveHappened();
@@ -95,6 +124,31 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             A.CallTo(() => fakeCmsApiService.GetItemAsync<CmsApiSharedContentModel>(A<Uri>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeMapper.Map<ContentItemModel>(A<CmsApiSharedContentModel>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeContentItemDocumentService.UpsertAsync(A<ContentItemModel>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadAsync(A<Uri>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadItemAsync(A<Uri>.Ignored)).MustNotHaveHappened();
+
+            Assert.Equal(expectedResult, result);
+        }
+
+        [Fact]
+        public async Task WebhooksContentServiceProcessContentForJobGroupItemForPublishedReturnsSuccess()
+        {
+            // Arrange
+            const HttpStatusCode expectedResult = HttpStatusCode.OK;
+
+            A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadItemAsync(A<Uri>.Ignored)).Returns(expectedResult);
+
+            // Act
+            var result = await webhooksContentService.ProcessContentAsync(false, Guid.NewGuid(), "https://somewhere.com", MessageContentType.JobGroupItem).ConfigureAwait(false);
+
+            // Assert
+            A.CallTo(() => fakeJobGroupCacheRefreshService.ReloadAsync(A<Uri>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeJobGroupCacheRefreshService.ReloadItemAsync(A<Uri>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeCmsApiService.GetItemAsync<CmsApiSharedContentModel>(A<Uri>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeMapper.Map<ContentItemModel>(A<CmsApiSharedContentModel>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeContentItemDocumentService.UpsertAsync(A<ContentItemModel>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadAsync(A<Uri>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadItemAsync(A<Uri>.Ignored)).MustHaveHappenedOnceExactly();
 
             Assert.Equal(expectedResult, result);
         }
@@ -106,7 +160,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             const HttpStatusCode expectedResult = HttpStatusCode.BadRequest;
 
             // Act
-            var result = await webhooksContentService.ProcessContentAsync(Guid.NewGuid(), "https://somewhere.com", MessageContentType.None).ConfigureAwait(false);
+            var result = await webhooksContentService.ProcessContentAsync(false, Guid.NewGuid(), "https://somewhere.com", MessageContentType.None).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeJobGroupCacheRefreshService.ReloadAsync(A<Uri>.Ignored)).MustNotHaveHappened();
@@ -114,6 +168,8 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             A.CallTo(() => fakeCmsApiService.GetItemAsync<CmsApiSharedContentModel>(A<Uri>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeMapper.Map<ContentItemModel>(A<CmsApiSharedContentModel>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeContentItemDocumentService.UpsertAsync(A<ContentItemModel>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadAsync(A<Uri>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadItemAsync(A<Uri>.Ignored)).MustNotHaveHappened();
 
             Assert.Equal(expectedResult, result);
         }
@@ -126,7 +182,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             var eventId = Guid.NewGuid();
 
             // Act
-            var exceptionResult = await Assert.ThrowsAsync<InvalidDataException>(async () => await webhooksContentService.ProcessContentAsync(eventId, apiEndpoint, MessageContentType.None).ConfigureAwait(false)).ConfigureAwait(false);
+            var exceptionResult = await Assert.ThrowsAsync<InvalidDataException>(async () => await webhooksContentService.ProcessContentAsync(false, eventId, apiEndpoint, MessageContentType.None).ConfigureAwait(false)).ConfigureAwait(false);
 
             // assert
             A.CallTo(() => fakeJobGroupCacheRefreshService.ReloadAsync(A<Uri>.Ignored)).MustNotHaveHappened();
@@ -134,6 +190,9 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             A.CallTo(() => fakeCmsApiService.GetItemAsync<CmsApiSharedContentModel>(A<Uri>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeMapper.Map<ContentItemModel>(A<CmsApiSharedContentModel>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeContentItemDocumentService.UpsertAsync(A<ContentItemModel>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadAsync(A<Uri>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadItemAsync(A<Uri>.Ignored)).MustNotHaveHappened();
+
             Assert.Equal($"Invalid Api url '{apiEndpoint}' received for Event Id: {eventId}", exceptionResult.Message);
         }
 
@@ -154,6 +213,8 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             A.CallTo(() => fakeCmsApiService.GetItemAsync<CmsApiSharedContentModel>(A<Uri>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeMapper.Map<ContentItemModel>(A<CmsApiSharedContentModel>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeContentItemDocumentService.UpsertAsync(A<ContentItemModel>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadAsync(A<Uri>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadItemAsync(A<Uri>.Ignored)).MustNotHaveHappened();
 
             Assert.Equal(expectedResult, result);
         }
@@ -176,6 +237,8 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             A.CallTo(() => fakeCmsApiService.GetItemAsync<CmsApiSharedContentModel>(A<Uri>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeMapper.Map<ContentItemModel>(A<CmsApiSharedContentModel>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeContentItemDocumentService.UpsertAsync(A<ContentItemModel>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadAsync(A<Uri>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadItemAsync(A<Uri>.Ignored)).MustNotHaveHappened();
 
             Assert.Equal(expectedResult, result);
         }

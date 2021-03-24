@@ -78,6 +78,7 @@ namespace DFC.App.JobGroups
             services.AddHostedService<SharedContentCacheReloadBackgroundService>();
             services.AddSubscriptionBackgroundService(configuration);
             services.AddTransient<IJobGroupCacheRefreshService, JobGroupCacheRefreshService>();
+            services.AddTransient<IJobGroupPublishedRefreshService, JobGroupPublishedRefreshService>();
             services.AddTransient<IWebhooksService, WebhooksService>();
             services.AddTransient<IWebhooksContentService, WebhooksContentService>();
             services.AddTransient<IWebhooksDeleteService, WebhooksDeleteService>();
@@ -89,11 +90,16 @@ namespace DFC.App.JobGroups
             var policyRegistry = services.AddPolicyRegistry();
 
             services.AddSingleton(configuration.GetSection(nameof(LmiTransformationApiClientOptions)).Get<LmiTransformationApiClientOptions>() ?? new LmiTransformationApiClientOptions());
+            services.AddSingleton(configuration.GetSection(nameof(JobGroupDraftApiClientOptions)).Get<JobGroupDraftApiClientOptions>() ?? new JobGroupDraftApiClientOptions());
             services.AddApiServices(configuration, policyRegistry);
 
             services
                 .AddPolicies(policyRegistry, nameof(LmiTransformationApiClientOptions), policyOptions)
                 .AddHttpClient<ILmiTransformationApiConnector, LmiTransformationApiConnector, LmiTransformationApiClientOptions>(nameof(LmiTransformationApiClientOptions), nameof(PolicyOptions.HttpRetry), nameof(PolicyOptions.HttpCircuitBreaker));
+
+            services
+                .AddPolicies(policyRegistry, nameof(JobGroupDraftApiClientOptions), policyOptions)
+                .AddHttpClient<IJobGroupApiConnector, JobGroupApiConnector, JobGroupDraftApiClientOptions>(nameof(JobGroupDraftApiClientOptions), nameof(PolicyOptions.HttpRetry), nameof(PolicyOptions.HttpCircuitBreaker));
 
             services.AddMvc(config =>
                 {

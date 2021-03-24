@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DFC.App.JobGroups.Data.Contracts
 {
-    public interface ILmiTransformationApiConnector
+    public interface IJobGroupApiConnector
     {
         Task<IList<JobGroupSummaryItemModel>?> GetSummaryAsync(Uri url);
 
