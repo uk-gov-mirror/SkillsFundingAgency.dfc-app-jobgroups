@@ -334,6 +334,10 @@
                                 "value": "/dfc-api-lmi-transformation/"
                             },
                             {
+                                "name": "SubscriptionSettings__Filter__PropertyContainsFilters__0__Values__2",
+                                "value": "/dfc-api-lmi-delta-report/"
+                            },
+                            {
                                 "name": "SubscriptionSettings__SubscriptionRegistrationDelay",
                                 "value": "00:02:00"
                             },
