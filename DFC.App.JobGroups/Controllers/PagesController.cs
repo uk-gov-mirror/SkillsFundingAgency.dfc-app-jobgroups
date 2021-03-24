@@ -134,7 +134,7 @@ namespace DFC.App.JobGroups.Controllers
                 {
                     breadcrumbItemModel = new BreadcrumbItemModel()
                     {
-                        Route = socRequest.FromJobProfileCanonicalName,
+                        Route = "/job-profiles/" + socRequest.FromJobProfileCanonicalName,
                         Title = jobGroupModel.JobProfiles.FirstOrDefault(f => !string.IsNullOrWhiteSpace(f.CanonicalName) && f.CanonicalName.Equals(socRequest.FromJobProfileCanonicalName, System.StringComparison.OrdinalIgnoreCase))?.Title,
                     };
                 }
@@ -209,7 +209,7 @@ namespace DFC.App.JobGroups.Controllers
             return NoContent();
         }
 
-        private static BreadcrumbViewModel BuildBreadcrumb(string segmentPath, BreadcrumbItemModel? breadcrumbItemModel)
+        private static BreadcrumbViewModel BuildBreadcrumb(string segmentPath, BreadcrumbItemModel? jpBreadcrumbItemModel)
         {
             var viewModel = new BreadcrumbViewModel
             {
@@ -223,13 +223,13 @@ namespace DFC.App.JobGroups.Controllers
                 },
             };
 
-            if (breadcrumbItemModel?.Title != null &&
-                !string.IsNullOrWhiteSpace(breadcrumbItemModel.Route))
+            if (jpBreadcrumbItemModel?.Title != null &&
+                !string.IsNullOrWhiteSpace(jpBreadcrumbItemModel.Route))
             {
                 var articlePathViewModel = new BreadcrumbItemViewModel
                 {
-                    Route = $"/{segmentPath}/{breadcrumbItemModel.Route}",
-                    Title = breadcrumbItemModel.Title,
+                    Route = jpBreadcrumbItemModel.Route,
+                    Title = jpBreadcrumbItemModel.Title,
                 };
 
                 viewModel.Breadcrumbs.Add(articlePathViewModel);

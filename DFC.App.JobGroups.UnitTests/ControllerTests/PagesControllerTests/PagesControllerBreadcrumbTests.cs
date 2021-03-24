@@ -38,7 +38,7 @@ namespace DFC.App.JobGroups.UnitTests.ControllerTests.PagesControllerTests
                     new BreadcrumbItemViewModel
                     {
                         Title = dummyJobGroupModel.JobProfiles.First().Title,
-                        Route = $"/{PagesController.RegistrationPath}/" + dummyJobGroupModel.JobProfiles.First().CanonicalName,
+                        Route = $"/job-profiles/" + dummyJobGroupModel.JobProfiles.First().CanonicalName,
                     },
                     new BreadcrumbItemViewModel
                     {
@@ -86,7 +86,7 @@ namespace DFC.App.JobGroups.UnitTests.ControllerTests.PagesControllerTests
                     new BreadcrumbItemViewModel
                     {
                         Title = dummyJobGroupModel.JobProfiles.First().Title,
-                        Route = $"/{PagesController.RegistrationPath}/" + dummyJobGroupModel.JobProfiles.First().CanonicalName,
+                        Route = $"/job-profiles/" + dummyJobGroupModel.JobProfiles.First().CanonicalName,
                     },
                     new BreadcrumbItemViewModel
                     {
