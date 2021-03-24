@@ -20,22 +20,25 @@ namespace DFC.App.JobGroups.Services.CacheContentService.Webhooks
         private readonly ICmsApiService cmsApiService;
         private readonly IDocumentService<ContentItemModel> contentItemDocumentService;
         private readonly IJobGroupCacheRefreshService jobGroupCacheRefreshService;
+        private readonly IJobGroupPublishedRefreshService jobGroupPublishedRefreshService;
 
         public WebhooksContentService(
             ILogger<WebhooksContentService> logger,
             IMapper mapper,
             ICmsApiService cmsApiService,
             IDocumentService<ContentItemModel> contentItemDocumentService,
-            IJobGroupCacheRefreshService jobGroupCacheRefreshService)
+            IJobGroupCacheRefreshService jobGroupCacheRefreshService,
+            IJobGroupPublishedRefreshService jobGroupPublishedRefreshService)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.cmsApiService = cmsApiService;
             this.contentItemDocumentService = contentItemDocumentService;
             this.jobGroupCacheRefreshService = jobGroupCacheRefreshService;
+            this.jobGroupPublishedRefreshService = jobGroupPublishedRefreshService;
         }
 
-        public async Task<HttpStatusCode> ProcessContentAsync(Guid eventId, string? apiEndpoint, MessageContentType messageContentType)
+        public async Task<HttpStatusCode> ProcessContentAsync(bool isDraft, Guid eventId, string? apiEndpoint, MessageContentType messageContentType)
         {
             if (!Uri.TryCreate(apiEndpoint, UriKind.Absolute, out Uri? url))
             {
@@ -48,11 +51,28 @@ namespace DFC.App.JobGroups.Services.CacheContentService.Webhooks
                     logger.LogInformation($"Event Id: {eventId} - processing shared content for: {url}");
                     return await ProcessSharedContentAsync(eventId, url).ConfigureAwait(false);
                 case MessageContentType.JobGroup:
-                    logger.LogInformation($"Event Id: {eventId} - processing LMI SOC refresh for: {url}");
-                    return await jobGroupCacheRefreshService.ReloadAsync(url).ConfigureAwait(false);
+                    if (isDraft)
+                    {
+                        logger.LogInformation($"Event Id: {eventId} - processing draft LMI SOC refresh for: {url}");
+                        return await jobGroupCacheRefreshService.ReloadAsync(url).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        logger.LogInformation($"Event Id: {eventId} - processing published LMI SOC refresh from draft for: {url}");
+                        return await jobGroupPublishedRefreshService.ReloadAsync(url).ConfigureAwait(false);
+                    }
+
                 case MessageContentType.JobGroupItem:
-                    logger.LogInformation($"Event Id: {eventId} - processing LMI SOC item for: {url}");
-                    return await jobGroupCacheRefreshService.ReloadItemAsync(url).ConfigureAwait(false);
+                    if (isDraft)
+                    {
+                        logger.LogInformation($"Event Id: {eventId} - processing draft LMI SOC item for: {url}");
+                        return await jobGroupCacheRefreshService.ReloadItemAsync(url).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        logger.LogInformation($"Event Id: {eventId} - processing published LMI SOC item from draft for: {url}");
+                        return await jobGroupPublishedRefreshService.ReloadItemAsync(url).ConfigureAwait(false);
+                    }
             }
 
             return HttpStatusCode.BadRequest;

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DFC.App.JobGroups.Data;
+using DFC.App.JobGroups.Data.Models;
 using DFC.App.JobGroups.Data.Models.CmsApiModels;
 using DFC.App.JobGroups.Data.Models.ContentModels;
 using DFC.App.JobGroups.Data.Models.JobGroupModels;
@@ -64,6 +65,8 @@ namespace DFC.App.JobGroups.AutoMapperProfiles
             CreateMap<BreakdownYearModel, BreakdownYearViewModel>();
 
             CreateMap<BreakdownYearValueModel, BreakdownYearValueViewModel>();
+
+            CreateMap<JobGroupModel, JobGroupSummaryItemModel>();
         }
     }
 }

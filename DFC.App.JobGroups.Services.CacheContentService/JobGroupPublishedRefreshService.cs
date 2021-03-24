@@ -1,35 +1,40 @@
 ﻿using DFC.App.JobGroups.Data.Contracts;
+using DFC.App.JobGroups.Data.Models.ClientOptions;
 using DFC.App.JobGroups.Data.Models.JobGroupModels;
 using DFC.Compui.Cosmos.Contracts;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
 namespace DFC.App.JobGroups.Services.CacheContentService
 {
-    public class JobGroupCacheRefreshService : IJobGroupCacheRefreshService
+    public class JobGroupPublishedRefreshService : IJobGroupPublishedRefreshService
     {
-        private readonly ILogger<JobGroupCacheRefreshService> logger;
+        private readonly ILogger<JobGroupPublishedRefreshService> logger;
         private readonly IDocumentService<JobGroupModel> jobGroupDocumentService;
-        private readonly ILmiTransformationApiConnector lmiTransformationApiConnector;
+        private readonly IJobGroupApiConnector jobGroupApiConnector;
+        private readonly JobGroupDraftApiClientOptions jobGroupDraftApiClientOptions;
 
-        public JobGroupCacheRefreshService(
-            ILogger<JobGroupCacheRefreshService> logger,
+        public JobGroupPublishedRefreshService(
+            ILogger<JobGroupPublishedRefreshService> logger,
             IDocumentService<JobGroupModel> jobGroupDocumentService,
-            ILmiTransformationApiConnector lmiTransformationApiConnector)
+            IJobGroupApiConnector jobGroupApiConnector,
+            JobGroupDraftApiClientOptions jobGroupDraftApiClientOptions)
         {
             this.logger = logger;
             this.jobGroupDocumentService = jobGroupDocumentService;
-            this.lmiTransformationApiConnector = lmiTransformationApiConnector;
+            this.jobGroupApiConnector = jobGroupApiConnector;
+            this.jobGroupDraftApiClientOptions = jobGroupDraftApiClientOptions;
         }
 
         public async Task<HttpStatusCode> ReloadAsync(Uri url)
         {
-            logger.LogInformation($"Refreshing all Job Groups from {url}");
-            var summaries = await lmiTransformationApiConnector.GetSummaryAsync(url).ConfigureAwait(false);
+            var fullUrl = new Uri($"{url}/{jobGroupDraftApiClientOptions.SummaryEndpoint}", UriKind.Absolute);
+
+            logger.LogInformation($"Refreshing all Job Groups from {fullUrl}");
+            var summaries = await jobGroupApiConnector.GetSummaryAsync(fullUrl).ConfigureAwait(false);
 
             if (summaries != null && summaries.Any())
             {
@@ -37,10 +42,10 @@ namespace DFC.App.JobGroups.Services.CacheContentService
 
                 foreach (var item in summaries)
                 {
-                    await ReloadItemAsync(new Uri($"{url}/{item.Id}", UriKind.Absolute)).ConfigureAwait(false);
+                    await ReloadItemAsync(new Uri($"{url}/{jobGroupDraftApiClientOptions.DetailEndpoint}/{item.Id}", UriKind.Absolute)).ConfigureAwait(false);
                 }
 
-                logger.LogInformation($"Refreshed all Job Groups from {url}");
+                logger.LogInformation($"Refreshed all Job Groups from {fullUrl}");
 
                 return HttpStatusCode.OK;
             }
@@ -52,7 +57,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService
         {
             logger.LogInformation($"Getting Job Group item: {url}");
 
-            var jobGroupModel = await lmiTransformationApiConnector.GetDetailsAsync(url).ConfigureAwait(false);
+            var jobGroupModel = await jobGroupApiConnector.GetDetailsAsync(url).ConfigureAwait(false);
 
             if (jobGroupModel != null)
             {
@@ -73,12 +78,6 @@ namespace DFC.App.JobGroups.Services.CacheContentService
         {
             logger.LogInformation("Purging all Job Groups");
             return await jobGroupDocumentService.PurgeAsync().ConfigureAwait(false);
-        }
-
-        public async Task<bool> DeleteAsync(Guid contentId)
-        {
-            logger.LogInformation($"Deleting Job Groups item: {contentId}");
-            return await jobGroupDocumentService.DeleteAsync(contentId).ConfigureAwait(false);
         }
     }
 }

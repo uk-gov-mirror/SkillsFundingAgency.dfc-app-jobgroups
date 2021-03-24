@@ -82,7 +82,9 @@ namespace DFC.App.JobGroups.Controllers
 
                     logger.LogInformation($"Got Event Id: {eventId}: {eventGridEvent.EventType}: Cache operation: {cacheOperation} {eventGridEventData.Api}");
 
-                    var result = await webhookService.ProcessMessageAsync(cacheOperation, eventId, contentId, eventGridEventData.Api!).ConfigureAwait(false);
+                    var isDraft = eventGridEvent.EventType.Equals("draft", StringComparison.OrdinalIgnoreCase);
+
+                    var result = await webhookService.ProcessMessageAsync(isDraft, cacheOperation, eventId, contentId, eventGridEventData.Api!).ConfigureAwait(false);
 
                     LogResult(eventId, result);
                 }

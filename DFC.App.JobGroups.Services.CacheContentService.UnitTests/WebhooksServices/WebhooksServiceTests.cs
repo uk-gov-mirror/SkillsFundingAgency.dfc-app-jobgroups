@@ -52,11 +52,11 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             A.CallTo(() => fakeWebhooksDeleteService.ProcessDeleteAsync(A<Guid>.Ignored, A<Guid>.Ignored, A<MessageContentType>.Ignored)).Returns(expectedResult);
 
             // Act
-            var result = await webhooksService.ProcessMessageAsync(WebhookCacheOperation.Delete, Guid.NewGuid(), Guid.NewGuid(), apiEndpoint).ConfigureAwait(false);
+            var result = await webhooksService.ProcessMessageAsync(true, WebhookCacheOperation.Delete, Guid.NewGuid(), Guid.NewGuid(), apiEndpoint).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeWebhooksDeleteService.ProcessDeleteAsync(A<Guid>.Ignored, A<Guid>.Ignored, A<MessageContentType>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => fakeWebhooksContentService.ProcessContentAsync(A<Guid>.Ignored, A<string>.Ignored, A<MessageContentType>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeWebhooksContentService.ProcessContentAsync(A<bool>.Ignored, A<Guid>.Ignored, A<string>.Ignored, A<MessageContentType>.Ignored)).MustNotHaveHappened();
 
             Assert.Equal(expectedResult, result);
         }
@@ -68,14 +68,14 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             const HttpStatusCode expectedResult = HttpStatusCode.OK;
             var apiEndpoint = $"https://somewhere.com/api/{Constants.ApiForJobGroups}";
 
-            A.CallTo(() => fakeWebhooksContentService.ProcessContentAsync(A<Guid>.Ignored, A<string>.Ignored, A<MessageContentType>.Ignored)).Returns(expectedResult);
+            A.CallTo(() => fakeWebhooksContentService.ProcessContentAsync(A<bool>.Ignored, A<Guid>.Ignored, A<string>.Ignored, A<MessageContentType>.Ignored)).Returns(expectedResult);
 
             // Act
-            var result = await webhooksService.ProcessMessageAsync(WebhookCacheOperation.CreateOrUpdate, Guid.NewGuid(), Guid.NewGuid(), apiEndpoint).ConfigureAwait(false);
+            var result = await webhooksService.ProcessMessageAsync(true, WebhookCacheOperation.CreateOrUpdate, Guid.NewGuid(), Guid.NewGuid(), apiEndpoint).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeWebhooksDeleteService.ProcessDeleteAsync(A<Guid>.Ignored, A<Guid>.Ignored, A<MessageContentType>.Ignored)).MustNotHaveHappened();
-            A.CallTo(() => fakeWebhooksContentService.ProcessContentAsync(A<Guid>.Ignored, A<string>.Ignored, A<MessageContentType>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeWebhooksContentService.ProcessContentAsync(A<bool>.Ignored, A<Guid>.Ignored, A<string>.Ignored, A<MessageContentType>.Ignored)).MustHaveHappenedOnceExactly();
 
             Assert.Equal(expectedResult, result);
         }
@@ -88,11 +88,11 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             var apiEndpoint = $"https://somewhere.com/api/{Constants.ApiForJobGroups}";
 
             // Act
-            var result = await webhooksService.ProcessMessageAsync(WebhookCacheOperation.None, Guid.NewGuid(), Guid.NewGuid(), apiEndpoint).ConfigureAwait(false);
+            var result = await webhooksService.ProcessMessageAsync(true, WebhookCacheOperation.None, Guid.NewGuid(), Guid.NewGuid(), apiEndpoint).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeWebhooksDeleteService.ProcessDeleteAsync(A<Guid>.Ignored, A<Guid>.Ignored, A<MessageContentType>.Ignored)).MustNotHaveHappened();
-            A.CallTo(() => fakeWebhooksContentService.ProcessContentAsync(A<Guid>.Ignored, A<string>.Ignored, A<MessageContentType>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeWebhooksContentService.ProcessContentAsync(A<bool>.Ignored, A<Guid>.Ignored, A<string>.Ignored, A<MessageContentType>.Ignored)).MustNotHaveHappened();
 
             Assert.Equal(expectedResult, result);
         }
@@ -105,11 +105,11 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             const string apiEndpoint = "https://somewhere.com/api/";
 
             // Act
-            var result = await webhooksService.ProcessMessageAsync(WebhookCacheOperation.CreateOrUpdate, Guid.NewGuid(), Guid.NewGuid(), apiEndpoint).ConfigureAwait(false);
+            var result = await webhooksService.ProcessMessageAsync(true, WebhookCacheOperation.CreateOrUpdate, Guid.NewGuid(), Guid.NewGuid(), apiEndpoint).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeWebhooksDeleteService.ProcessDeleteAsync(A<Guid>.Ignored, A<Guid>.Ignored, A<MessageContentType>.Ignored)).MustNotHaveHappened();
-            A.CallTo(() => fakeWebhooksContentService.ProcessContentAsync(A<Guid>.Ignored, A<string>.Ignored, A<MessageContentType>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeWebhooksContentService.ProcessContentAsync(A<bool>.Ignored, A<Guid>.Ignored, A<string>.Ignored, A<MessageContentType>.Ignored)).MustNotHaveHappened();
 
             Assert.Equal(expectedResult, result);
         }

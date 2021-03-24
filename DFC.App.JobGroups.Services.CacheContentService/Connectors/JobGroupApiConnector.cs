@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace DFC.App.JobGroups.Services.CacheContentService.Connectors
 {
-    public class LmiTransformationApiConnector : ILmiTransformationApiConnector
+    public class JobGroupApiConnector : IJobGroupApiConnector
     {
-        private readonly ILogger<LmiTransformationApiConnector> logger;
+        private readonly ILogger<JobGroupApiConnector> logger;
         private readonly HttpClient httpClient;
         private readonly IApiDataConnector apiDataConnector;
 
-        public LmiTransformationApiConnector(
-            ILogger<LmiTransformationApiConnector> logger,
+        public JobGroupApiConnector(
+            ILogger<JobGroupApiConnector> logger,
             HttpClient httpClient,
             IApiDataConnector apiDataConnector)
         {
@@ -27,13 +27,13 @@ namespace DFC.App.JobGroups.Services.CacheContentService.Connectors
 
         public async Task<IList<JobGroupSummaryItemModel>?> GetSummaryAsync(Uri url)
         {
-            logger.LogInformation($"Retrieving summaries from LMI Transformations API: {url}");
+            logger.LogInformation($"Retrieving summaries from job groups API: {url}");
             return await apiDataConnector.GetAsync<IList<JobGroupSummaryItemModel>>(httpClient, url).ConfigureAwait(false);
         }
 
         public async Task<JobGroupModel?> GetDetailsAsync(Uri url)
         {
-            logger.LogInformation($"Retrieving details from LMI Transformations API: {url}");
+            logger.LogInformation($"Retrieving details from job groups API: {url}");
             return await apiDataConnector.GetAsync<JobGroupModel>(httpClient, url).ConfigureAwait(false);
         }
     }
