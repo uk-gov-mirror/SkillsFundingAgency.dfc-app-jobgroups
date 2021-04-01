@@ -102,6 +102,18 @@
         },
         "MemoryPercentageThreshold": {
             "type": "string"
+        },
+        "EventGridAegSasKey": {
+            "type": "securestring"
+        },
+        "EventGridTopicUrl": {
+            "type": "string"
+        },
+        "EventGridPublishClientOptionsApiEndpoint": {
+            "type": "securestring"
+        },
+        "EventGridSubjectPrefix": {
+            "type": "securestring"
         }
     },
     "variables": {
@@ -340,6 +352,22 @@
                             {
                                 "name": "SubscriptionSettings__SubscriptionRegistrationDelay",
                                 "value": "00:02:00"
+                            },
+                            {
+                                "name": "EventGridClientOptions__TopicKey",
+                                "value": "[parameters('EventGridAegSasKey')]"
+                            },
+                            {
+                                "name": "EventGridClientOptions__TopicEndpoint",
+                                "value": "[parameters('EventGridTopicUrl')]"
+                            },
+                            {
+                                "name": "EventGridClientOptions__SubjectPrefix",
+                                "value": "[parameters('EventGridSubjectPrefix')]"
+                            },
+                            {
+                                "name": "EventGridClientOptions__ApiEndpoint",
+                                "value": "[parameters('EventGridPublishClientOptionsApiEndpoint')]"
                             },
                             {
                                 "name": "WEBSITE_RUN_FROM_PACKAGE",

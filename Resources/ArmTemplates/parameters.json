@@ -103,6 +103,18 @@
         },
         "CPUPercentageThreshold": {
             "value": "__CPUPercentageThreshold__"
+        },
+        "EventGridAegSasKey": {
+            "value": "__EventGridAegSasKey__"
+        },
+        "EventGridTopicUrl": {
+            "value": "__EventGridTopicUrl__"
+        },
+        "EventGridPublishClientOptionsApiEndpoint": {
+            "value": "__EventGridPublishClientOptionsApiEndpoint__"
+        },
+        "EventGridSubjectPrefix": {
+            "value": "__EventGridSubjectPrefix__"
         }
     }
 }
