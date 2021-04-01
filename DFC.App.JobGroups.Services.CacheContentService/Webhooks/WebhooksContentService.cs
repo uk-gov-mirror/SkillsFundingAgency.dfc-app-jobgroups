@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using DFC.App.JobGroups.Data.Contracts;
 using DFC.App.JobGroups.Data.Enums;
+using DFC.App.JobGroups.Data.Models;
+using DFC.App.JobGroups.Data.Models.ClientOptions;
 using DFC.App.JobGroups.Data.Models.CmsApiModels;
 using DFC.App.JobGroups.Data.Models.ContentModels;
 using DFC.Compui.Cosmos.Contracts;
@@ -15,12 +17,16 @@ namespace DFC.App.JobGroups.Services.CacheContentService.Webhooks
 {
     public class WebhooksContentService : IWebhooksContentService
     {
+        private const string EventTypePublished = "published";
+
         private readonly ILogger<WebhooksContentService> logger;
         private readonly IMapper mapper;
         private readonly ICmsApiService cmsApiService;
         private readonly IDocumentService<ContentItemModel> contentItemDocumentService;
         private readonly IJobGroupCacheRefreshService jobGroupCacheRefreshService;
         private readonly IJobGroupPublishedRefreshService jobGroupPublishedRefreshService;
+        private readonly IEventGridService eventGridService;
+        private readonly EventGridClientOptions eventGridClientOptions;
 
         public WebhooksContentService(
             ILogger<WebhooksContentService> logger,
@@ -28,7 +34,9 @@ namespace DFC.App.JobGroups.Services.CacheContentService.Webhooks
             ICmsApiService cmsApiService,
             IDocumentService<ContentItemModel> contentItemDocumentService,
             IJobGroupCacheRefreshService jobGroupCacheRefreshService,
-            IJobGroupPublishedRefreshService jobGroupPublishedRefreshService)
+            IJobGroupPublishedRefreshService jobGroupPublishedRefreshService,
+            IEventGridService eventGridService,
+            EventGridClientOptions eventGridClientOptions)
         {
             this.logger = logger;
             this.mapper = mapper;
@@ -36,6 +44,8 @@ namespace DFC.App.JobGroups.Services.CacheContentService.Webhooks
             this.contentItemDocumentService = contentItemDocumentService;
             this.jobGroupCacheRefreshService = jobGroupCacheRefreshService;
             this.jobGroupPublishedRefreshService = jobGroupPublishedRefreshService;
+            this.eventGridService = eventGridService;
+            this.eventGridClientOptions = eventGridClientOptions;
         }
 
         public async Task<HttpStatusCode> ProcessContentAsync(bool isDraft, Guid eventId, string? apiEndpoint, MessageContentType messageContentType)
@@ -54,7 +64,13 @@ namespace DFC.App.JobGroups.Services.CacheContentService.Webhooks
                     if (isDraft)
                     {
                         logger.LogInformation($"Event Id: {eventId} - processing draft LMI SOC refresh for: {url}");
-                        return await jobGroupCacheRefreshService.ReloadAsync(url).ConfigureAwait(false);
+                        var result = await jobGroupCacheRefreshService.ReloadAsync(url).ConfigureAwait(false);
+                        if (result == HttpStatusCode.OK || result == HttpStatusCode.Created)
+                        {
+                            await PostDraftEventAsync($"Draft all SOCs to delta-report API").ConfigureAwait(false);
+                        }
+
+                        return result;
                     }
                     else
                     {
@@ -66,7 +82,13 @@ namespace DFC.App.JobGroups.Services.CacheContentService.Webhooks
                     if (isDraft)
                     {
                         logger.LogInformation($"Event Id: {eventId} - processing draft LMI SOC item for: {url}");
-                        return await jobGroupCacheRefreshService.ReloadItemAsync(url).ConfigureAwait(false);
+                        var result = await jobGroupCacheRefreshService.ReloadItemAsync(url).ConfigureAwait(false);
+                        if (result == HttpStatusCode.OK || result == HttpStatusCode.Created)
+                        {
+                            await PostDraftEventAsync($"Draft all SOCs to delta-report API").ConfigureAwait(false);
+                        }
+
+                        return result;
                     }
                     else
                     {
@@ -93,6 +115,22 @@ namespace DFC.App.JobGroups.Services.CacheContentService.Webhooks
 
             logger.LogInformation($"Event Id: {eventId} - processed shared content result: {contentResult} - for: {url}");
             return contentResult;
+        }
+
+        public async Task PostDraftEventAsync(string displayText)
+        {
+            logger.LogInformation($"Posting to event grid for: {displayText}");
+
+            var eventGridEventData = new EventGridEventData
+            {
+                ItemId = Guid.NewGuid().ToString(),
+                Api = eventGridClientOptions.ApiEndpoint?.ToString(),
+                DisplayText = displayText,
+                VersionId = Guid.NewGuid().ToString(),
+                Author = eventGridClientOptions.SubjectPrefix,
+            };
+
+            await eventGridService.SendEventAsync(eventGridEventData, eventGridClientOptions.SubjectPrefix, EventTypePublished).ConfigureAwait(false);
         }
     }
 }
