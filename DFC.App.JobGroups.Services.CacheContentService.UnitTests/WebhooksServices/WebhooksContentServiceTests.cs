@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using DFC.App.JobGroups.Data.Contracts;
 using DFC.App.JobGroups.Data.Enums;
+using DFC.App.JobGroups.Data.Models;
+using DFC.App.JobGroups.Data.Models.ClientOptions;
 using DFC.App.JobGroups.Data.Models.CmsApiModels;
 using DFC.App.JobGroups.Data.Models.ContentModels;
 using DFC.App.JobGroups.Services.CacheContentService.Webhooks;
@@ -28,12 +30,13 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
         private readonly IJobGroupCacheRefreshService fakeJobGroupCacheRefreshService = A.Fake<IJobGroupCacheRefreshService>();
 
         private readonly IJobGroupPublishedRefreshService fakeJobGroupPublishedRefreshService = A.Fake<IJobGroupPublishedRefreshService>();
-
+        private readonly IEventGridService fakeEventGridService = A.Fake<IEventGridService>();
+        private readonly EventGridClientOptions eventGridClientOptions = new EventGridClientOptions();
         private readonly WebhooksContentService webhooksContentService;
 
         public WebhooksContentServiceTests()
         {
-            webhooksContentService = new WebhooksContentService(A.Fake<ILogger<WebhooksContentService>>(), fakeMapper, fakeCmsApiService, fakeContentItemDocumentService, fakeJobGroupCacheRefreshService, fakeJobGroupPublishedRefreshService);
+            webhooksContentService = new WebhooksContentService(A.Fake<ILogger<WebhooksContentService>>(), fakeMapper, fakeCmsApiService, fakeContentItemDocumentService, fakeJobGroupCacheRefreshService, fakeJobGroupPublishedRefreshService, fakeEventGridService, eventGridClientOptions);
         }
 
         [Fact]
@@ -57,16 +60,17 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             A.CallTo(() => fakeContentItemDocumentService.UpsertAsync(A<ContentItemModel>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadAsync(A<Uri>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadItemAsync(A<Uri>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeEventGridService.SendEventAsync(A<EventGridEventData>.Ignored, A<string>.Ignored, A<string>.Ignored)).MustNotHaveHappened();
 
             Assert.Equal(expectedResult, result);
         }
 
-        [Fact]
-        public async Task WebhooksContentServiceProcessContentForJobGroupForDraftReturnsSuccess()
+        [Theory]
+        [InlineData(HttpStatusCode.OK)]
+        [InlineData(HttpStatusCode.Created)]
+        public async Task WebhooksContentServiceProcessContentForJobGroupForDraftReturnsSuccess(HttpStatusCode expectedResult)
         {
             // Arrange
-            const HttpStatusCode expectedResult = HttpStatusCode.OK;
-
             A.CallTo(() => fakeJobGroupCacheRefreshService.ReloadAsync(A<Uri>.Ignored)).Returns(expectedResult);
 
             // Act
@@ -80,6 +84,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             A.CallTo(() => fakeContentItemDocumentService.UpsertAsync(A<ContentItemModel>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadAsync(A<Uri>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadItemAsync(A<Uri>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeEventGridService.SendEventAsync(A<EventGridEventData>.Ignored, A<string>.Ignored, A<string>.Ignored)).MustHaveHappenedOnceExactly();
 
             Assert.Equal(expectedResult, result);
         }
@@ -103,16 +108,17 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             A.CallTo(() => fakeContentItemDocumentService.UpsertAsync(A<ContentItemModel>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadAsync(A<Uri>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadItemAsync(A<Uri>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeEventGridService.SendEventAsync(A<EventGridEventData>.Ignored, A<string>.Ignored, A<string>.Ignored)).MustNotHaveHappened();
 
             Assert.Equal(expectedResult, result);
         }
 
-        [Fact]
-        public async Task WebhooksContentServiceProcessContentForJobGroupItemForDraftReturnsSuccess()
+        [Theory]
+        [InlineData(HttpStatusCode.OK)]
+        [InlineData(HttpStatusCode.Created)]
+        public async Task WebhooksContentServiceProcessContentForJobGroupItemForDraftReturnsSuccess(HttpStatusCode expectedResult)
         {
             // Arrange
-            const HttpStatusCode expectedResult = HttpStatusCode.OK;
-
             A.CallTo(() => fakeJobGroupCacheRefreshService.ReloadItemAsync(A<Uri>.Ignored)).Returns(expectedResult);
 
             // Act
@@ -126,6 +132,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             A.CallTo(() => fakeContentItemDocumentService.UpsertAsync(A<ContentItemModel>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadAsync(A<Uri>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadItemAsync(A<Uri>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeEventGridService.SendEventAsync(A<EventGridEventData>.Ignored, A<string>.Ignored, A<string>.Ignored)).MustHaveHappenedOnceExactly();
 
             Assert.Equal(expectedResult, result);
         }
@@ -149,6 +156,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             A.CallTo(() => fakeContentItemDocumentService.UpsertAsync(A<ContentItemModel>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadAsync(A<Uri>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadItemAsync(A<Uri>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeEventGridService.SendEventAsync(A<EventGridEventData>.Ignored, A<string>.Ignored, A<string>.Ignored)).MustNotHaveHappened();
 
             Assert.Equal(expectedResult, result);
         }
@@ -170,6 +178,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             A.CallTo(() => fakeContentItemDocumentService.UpsertAsync(A<ContentItemModel>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadAsync(A<Uri>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadItemAsync(A<Uri>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeEventGridService.SendEventAsync(A<EventGridEventData>.Ignored, A<string>.Ignored, A<string>.Ignored)).MustNotHaveHappened();
 
             Assert.Equal(expectedResult, result);
         }
@@ -192,6 +201,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             A.CallTo(() => fakeContentItemDocumentService.UpsertAsync(A<ContentItemModel>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadAsync(A<Uri>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadItemAsync(A<Uri>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeEventGridService.SendEventAsync(A<EventGridEventData>.Ignored, A<string>.Ignored, A<string>.Ignored)).MustNotHaveHappened();
 
             Assert.Equal($"Invalid Api url '{apiEndpoint}' received for Event Id: {eventId}", exceptionResult.Message);
         }
@@ -241,6 +251,18 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadItemAsync(A<Uri>.Ignored)).MustNotHaveHappened();
 
             Assert.Equal(expectedResult, result);
+        }
+
+        [Fact]
+        public async Task WebhooksContentServicePostDraftEventAsyncReturnsSuccessfully()
+        {
+            // Arrange
+
+            // Act
+            await webhooksContentService.PostDraftEventAsync("hello world").ConfigureAwait(false);
+
+            // Assert
+            A.CallTo(() => fakeEventGridService.SendEventAsync(A<EventGridEventData>.Ignored, A<string>.Ignored, A<string>.Ignored)).MustHaveHappenedOnceExactly();
         }
     }
 }
