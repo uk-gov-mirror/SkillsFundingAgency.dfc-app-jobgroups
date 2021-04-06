@@ -14,7 +14,7 @@ variables:
 - name: PageRegistrationFile
   value: registration.json
 - name: ApplicationName
-  value: DFC-App-JobGroups
+  value: dfc-app-jobgroups
 - name: contentUrl
   value: $(ContentApiAddress)/api/execute
 - name: subscriptionUrl
