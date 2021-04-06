@@ -94,6 +94,18 @@
         },
         "CPUPercentageThreshold": {
             "value": "0"
+        },
+        "EventGridAegSasKey": {
+            "value": "EventGridAegSasKey"
+        },
+        "EventGridTopicUrl": {
+            "value": "EventGridTopicUrl"
+        },
+        "EventGridPublishClientOptionsApiEndpoint": {
+            "value": "EventGridPublishClientOptionsApiEndpoint"
+        },
+        "EventGridSubjectPrefix": {
+            "value": "EventGridSubjectPrefix"
         }
     }
 }

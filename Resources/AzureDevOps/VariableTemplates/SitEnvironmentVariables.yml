@@ -49,3 +49,7 @@ variables:
   value: 75
 - name: CPUPercentageThreshold
   value: 75
+- name: EventGridPublishClientOptionsApiEndpoint
+  value: https://dfc-sit-app-jobgroups-as.$(FunctionAppDomain)/lmi-delta-report
+- name: EventGridSubjectPrefix
+  value: /$(ApplicationName)/
