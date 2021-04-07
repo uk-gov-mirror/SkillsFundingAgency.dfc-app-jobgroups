@@ -85,6 +85,9 @@ namespace DFC.App.JobGroups
             services.AddTransient<ISharedContentCacheReloadService, SharedContentCacheReloadService>();
             services.AddTransient<IApiConnector, ApiConnector>();
             services.AddTransient<IApiDataConnector, ApiDataConnector>();
+            services.AddSingleton(configuration.GetSection(nameof(EventGridClientOptions)).Get<EventGridClientOptions>() ?? new EventGridClientOptions());
+            services.AddTransient<IEventGridService, EventGridService>();
+            services.AddTransient<IEventGridClientService, EventGridClientService>();
 
             var policyOptions = configuration.GetSection(AppSettingsPolicies).Get<PolicyOptions>() ?? new PolicyOptions();
             var policyRegistry = services.AddPolicyRegistry();
