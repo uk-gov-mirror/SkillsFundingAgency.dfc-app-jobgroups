@@ -48,7 +48,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.Webhooks
             this.eventGridClientOptions = eventGridClientOptions;
         }
 
-        public async Task<HttpStatusCode> ProcessContentAsync(bool isDraft, Guid eventId, string? apiEndpoint, MessageContentType messageContentType)
+        public async Task<HttpStatusCode> ProcessContentAsync(bool isDraft, Guid eventId, Guid? contentId, string? apiEndpoint, MessageContentType messageContentType)
         {
             if (!Uri.TryCreate(apiEndpoint, UriKind.Absolute, out Uri? url))
             {
@@ -67,7 +67,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.Webhooks
                         var result = await jobGroupCacheRefreshService.ReloadAsync(url).ConfigureAwait(false);
                         if (result == HttpStatusCode.OK || result == HttpStatusCode.Created)
                         {
-                            await PostDraftEventAsync($"Draft all SOCs to delta-report API").ConfigureAwait(false);
+                            await PostDraftEventAsync($"Draft all SOCs to delta-report API", eventGridClientOptions.ApiEndpoint).ConfigureAwait(false);
                         }
 
                         return result;
@@ -85,7 +85,8 @@ namespace DFC.App.JobGroups.Services.CacheContentService.Webhooks
                         var result = await jobGroupCacheRefreshService.ReloadItemAsync(url).ConfigureAwait(false);
                         if (result == HttpStatusCode.OK || result == HttpStatusCode.Created)
                         {
-                            await PostDraftEventAsync($"Draft individual SOC to delta-report API").ConfigureAwait(false);
+                            var eventGridEndpoint = new Uri($"{eventGridClientOptions.ApiEndpoint}/{contentId}", UriKind.Absolute);
+                            await PostDraftEventAsync($"Draft individual SOC to delta-report API", eventGridEndpoint).ConfigureAwait(false);
                         }
 
                         return result;
@@ -100,7 +101,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.Webhooks
             return HttpStatusCode.BadRequest;
         }
 
-        public async Task<HttpStatusCode> ProcessSharedContentAsync(Guid eventId, Uri url)
+        public async Task<HttpStatusCode> ProcessSharedContentAsync(Guid eventId, Uri? url)
         {
             var apiDataModel = await cmsApiService.GetItemAsync<CmsApiSharedContentModel>(url).ConfigureAwait(false);
             var contentItemModel = mapper.Map<ContentItemModel>(apiDataModel);
@@ -117,14 +118,14 @@ namespace DFC.App.JobGroups.Services.CacheContentService.Webhooks
             return contentResult;
         }
 
-        public async Task PostDraftEventAsync(string displayText)
+        public async Task PostDraftEventAsync(string displayText, Uri? apiEndpoint)
         {
             logger.LogInformation($"Posting to event grid for: {displayText}");
 
             var eventGridEventData = new EventGridEventData
             {
                 ItemId = Guid.NewGuid().ToString(),
-                Api = eventGridClientOptions.ApiEndpoint?.ToString(),
+                Api = apiEndpoint?.ToString(),
                 DisplayText = displayText,
                 VersionId = Guid.NewGuid().ToString(),
                 Author = eventGridClientOptions.SubjectPrefix,
