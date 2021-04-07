@@ -31,7 +31,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
 
         private readonly IJobGroupPublishedRefreshService fakeJobGroupPublishedRefreshService = A.Fake<IJobGroupPublishedRefreshService>();
         private readonly IEventGridService fakeEventGridService = A.Fake<IEventGridService>();
-        private readonly EventGridClientOptions eventGridClientOptions = new EventGridClientOptions();
+        private readonly EventGridClientOptions eventGridClientOptions = new EventGridClientOptions { ApiEndpoint = new Uri("https://somewhere.com", UriKind.Absolute) };
         private readonly WebhooksContentService webhooksContentService;
 
         public WebhooksContentServiceTests()
@@ -50,7 +50,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             A.CallTo(() => fakeContentItemDocumentService.UpsertAsync(A<ContentItemModel>.Ignored)).Returns(expectedResult);
 
             // Act
-            var result = await webhooksContentService.ProcessContentAsync(false, Guid.NewGuid(), "https://somewhere.com", MessageContentType.SharedContentItem).ConfigureAwait(false);
+            var result = await webhooksContentService.ProcessContentAsync(false, Guid.NewGuid(), null, "https://somewhere.com", MessageContentType.SharedContentItem).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeJobGroupCacheRefreshService.ReloadAsync(A<Uri>.Ignored)).MustNotHaveHappened();
@@ -74,7 +74,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             A.CallTo(() => fakeJobGroupCacheRefreshService.ReloadAsync(A<Uri>.Ignored)).Returns(expectedResult);
 
             // Act
-            var result = await webhooksContentService.ProcessContentAsync(true, Guid.NewGuid(), "https://somewhere.com", MessageContentType.JobGroup).ConfigureAwait(false);
+            var result = await webhooksContentService.ProcessContentAsync(true, Guid.NewGuid(), null, "https://somewhere.com", MessageContentType.JobGroup).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeJobGroupCacheRefreshService.ReloadAsync(A<Uri>.Ignored)).MustHaveHappenedOnceExactly();
@@ -98,7 +98,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadAsync(A<Uri>.Ignored)).Returns(expectedResult);
 
             // Act
-            var result = await webhooksContentService.ProcessContentAsync(false, Guid.NewGuid(), "https://somewhere.com", MessageContentType.JobGroup).ConfigureAwait(false);
+            var result = await webhooksContentService.ProcessContentAsync(false, Guid.NewGuid(), null, "https://somewhere.com", MessageContentType.JobGroup).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeJobGroupCacheRefreshService.ReloadAsync(A<Uri>.Ignored)).MustNotHaveHappened();
@@ -122,7 +122,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             A.CallTo(() => fakeJobGroupCacheRefreshService.ReloadItemAsync(A<Uri>.Ignored)).Returns(expectedResult);
 
             // Act
-            var result = await webhooksContentService.ProcessContentAsync(true, Guid.NewGuid(), "https://somewhere.com", MessageContentType.JobGroupItem).ConfigureAwait(false);
+            var result = await webhooksContentService.ProcessContentAsync(true, Guid.NewGuid(), Guid.NewGuid(), "https://somewhere.com", MessageContentType.JobGroupItem).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeJobGroupCacheRefreshService.ReloadAsync(A<Uri>.Ignored)).MustNotHaveHappened();
@@ -146,7 +146,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             A.CallTo(() => fakeJobGroupPublishedRefreshService.ReloadItemAsync(A<Uri>.Ignored)).Returns(expectedResult);
 
             // Act
-            var result = await webhooksContentService.ProcessContentAsync(false, Guid.NewGuid(), "https://somewhere.com", MessageContentType.JobGroupItem).ConfigureAwait(false);
+            var result = await webhooksContentService.ProcessContentAsync(false, Guid.NewGuid(), Guid.NewGuid(), "https://somewhere.com", MessageContentType.JobGroupItem).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeJobGroupCacheRefreshService.ReloadAsync(A<Uri>.Ignored)).MustNotHaveHappened();
@@ -168,7 +168,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             const HttpStatusCode expectedResult = HttpStatusCode.BadRequest;
 
             // Act
-            var result = await webhooksContentService.ProcessContentAsync(false, Guid.NewGuid(), "https://somewhere.com", MessageContentType.None).ConfigureAwait(false);
+            var result = await webhooksContentService.ProcessContentAsync(false, Guid.NewGuid(), Guid.NewGuid(), "https://somewhere.com", MessageContentType.None).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeJobGroupCacheRefreshService.ReloadAsync(A<Uri>.Ignored)).MustNotHaveHappened();
@@ -189,9 +189,10 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             // Arrange
             const string apiEndpoint = "https//:somewhere.com";
             var eventId = Guid.NewGuid();
+            var contentId = Guid.NewGuid();
 
             // Act
-            var exceptionResult = await Assert.ThrowsAsync<InvalidDataException>(async () => await webhooksContentService.ProcessContentAsync(false, eventId, apiEndpoint, MessageContentType.None).ConfigureAwait(false)).ConfigureAwait(false);
+            var exceptionResult = await Assert.ThrowsAsync<InvalidDataException>(async () => await webhooksContentService.ProcessContentAsync(false, eventId, contentId, apiEndpoint, MessageContentType.None).ConfigureAwait(false)).ConfigureAwait(false);
 
             // assert
             A.CallTo(() => fakeJobGroupCacheRefreshService.ReloadAsync(A<Uri>.Ignored)).MustNotHaveHappened();
@@ -259,7 +260,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             // Arrange
 
             // Act
-            await webhooksContentService.PostDraftEventAsync("hello world").ConfigureAwait(false);
+            await webhooksContentService.PostDraftEventAsync("hello world", new Uri("https://somewhere.com", UriKind.Absolute)).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeEventGridService.SendEventAsync(A<EventGridEventData>.Ignored, A<string>.Ignored, A<string>.Ignored)).MustHaveHappenedOnceExactly();

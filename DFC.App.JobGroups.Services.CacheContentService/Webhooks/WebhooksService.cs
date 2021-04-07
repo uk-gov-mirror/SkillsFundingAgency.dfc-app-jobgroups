@@ -62,7 +62,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.Webhooks
                     return await webhooksDeleteService.ProcessDeleteAsync(eventId, contentId, messageContentType).ConfigureAwait(false);
 
                 case WebhookCacheOperation.CreateOrUpdate:
-                    return await webhooksContentService.ProcessContentAsync(isDraft, eventId, apiEndpoint, messageContentType).ConfigureAwait(false);
+                    return await webhooksContentService.ProcessContentAsync(isDraft, eventId, contentId, apiEndpoint, messageContentType).ConfigureAwait(false);
             }
 
             logger.LogError($"Event Id: {eventId} got unknown cache operation - {webhookCacheOperation}");
