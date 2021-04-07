@@ -17,7 +17,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.Webhooks
 {
     public class WebhooksContentService : IWebhooksContentService
     {
-        private const string EventTypePublished = "published";
+        private const string EventTypeDraft = "draft";
 
         private readonly ILogger<WebhooksContentService> logger;
         private readonly IMapper mapper;
@@ -85,7 +85,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.Webhooks
                         var result = await jobGroupCacheRefreshService.ReloadItemAsync(url).ConfigureAwait(false);
                         if (result == HttpStatusCode.OK || result == HttpStatusCode.Created)
                         {
-                            await PostDraftEventAsync($"Draft all SOCs to delta-report API").ConfigureAwait(false);
+                            await PostDraftEventAsync($"Draft individual SOC to delta-report API").ConfigureAwait(false);
                         }
 
                         return result;
@@ -130,7 +130,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.Webhooks
                 Author = eventGridClientOptions.SubjectPrefix,
             };
 
-            await eventGridService.SendEventAsync(eventGridEventData, eventGridClientOptions.SubjectPrefix, EventTypePublished).ConfigureAwait(false);
+            await eventGridService.SendEventAsync(eventGridEventData, eventGridClientOptions.SubjectPrefix, EventTypeDraft).ConfigureAwait(false);
         }
     }
 }
