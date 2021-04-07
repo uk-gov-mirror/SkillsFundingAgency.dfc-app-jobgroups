@@ -56,4 +56,4 @@ variables:
 - name: EventGridPublishClientOptionsApiEndpoint
   value: https://dfc-dev-draft-app-jobgroups-as.$(FunctionAppDomain)/lmi-delta-report
 - name: EventGridSubjectPrefix
-  value: /$(ApplicationName)/
+  value: /dfc-app-jobgroups/
