@@ -260,7 +260,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.UnitTests.WebhooksServi
             // Arrange
 
             // Act
-            await webhooksContentService.PostDraftEventAsync("hello world", new Uri("https://somewhere.com", UriKind.Absolute)).ConfigureAwait(false);
+            await webhooksContentService.PostDraftEventAsync("hello world", new Uri("https://somewhere.com", UriKind.Absolute), Guid.NewGuid()).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeEventGridService.SendEventAsync(A<EventGridEventData>.Ignored, A<string>.Ignored, A<string>.Ignored)).MustHaveHappenedOnceExactly();

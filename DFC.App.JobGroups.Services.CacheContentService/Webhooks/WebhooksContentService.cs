@@ -67,7 +67,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.Webhooks
                         var result = await jobGroupCacheRefreshService.ReloadAsync(url).ConfigureAwait(false);
                         if (result == HttpStatusCode.OK || result == HttpStatusCode.Created)
                         {
-                            await PostDraftEventAsync($"Draft all SOCs to delta-report API", eventGridClientOptions.ApiEndpoint).ConfigureAwait(false);
+                            await PostDraftEventAsync($"Draft all SOCs to delta-report API", eventGridClientOptions.ApiEndpoint, Guid.NewGuid()).ConfigureAwait(false);
                         }
 
                         return result;
@@ -86,7 +86,7 @@ namespace DFC.App.JobGroups.Services.CacheContentService.Webhooks
                         if (result == HttpStatusCode.OK || result == HttpStatusCode.Created)
                         {
                             var eventGridEndpoint = new Uri($"{eventGridClientOptions.ApiEndpoint}/{contentId}", UriKind.Absolute);
-                            await PostDraftEventAsync($"Draft individual SOC to delta-report API", eventGridEndpoint).ConfigureAwait(false);
+                            await PostDraftEventAsync($"Draft individual SOC to delta-report API", eventGridEndpoint, contentId).ConfigureAwait(false);
                         }
 
                         return result;
@@ -118,13 +118,13 @@ namespace DFC.App.JobGroups.Services.CacheContentService.Webhooks
             return contentResult;
         }
 
-        public async Task PostDraftEventAsync(string displayText, Uri? apiEndpoint)
+        public async Task PostDraftEventAsync(string displayText, Uri? apiEndpoint, Guid? contentId)
         {
             logger.LogInformation($"Posting to event grid for: {displayText}");
 
             var eventGridEventData = new EventGridEventData
             {
-                ItemId = Guid.NewGuid().ToString(),
+                ItemId = contentId.ToString(),
                 Api = apiEndpoint?.ToString(),
                 DisplayText = displayText,
                 VersionId = Guid.NewGuid().ToString(),
