@@ -38,7 +38,7 @@ variables:
 - name: aspInstances
   value: 3
 - name: aspSize
-  value: 2
+  value: 1
 - name: clientAffinity
   value: false
 - name: jobgroupsAppDatabaseThroughput
