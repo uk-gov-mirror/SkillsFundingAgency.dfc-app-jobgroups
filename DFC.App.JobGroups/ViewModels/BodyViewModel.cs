@@ -9,6 +9,8 @@ namespace DFC.App.JobGroups.ViewModels
 
         public string? Description { get; set; }
 
+        public string? SourceDateString { get; set; }
+
         public JobGrowthViewModel? JobGrowth { get; set; }
 
         public QualificationLevelViewModel? QualificationLevel { get; set; }

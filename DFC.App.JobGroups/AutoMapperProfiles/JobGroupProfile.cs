@@ -7,6 +7,7 @@ using DFC.App.JobGroups.Data.Models.JobGroupModels;
 using DFC.App.JobGroups.ViewModels;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 
 namespace DFC.App.JobGroups.AutoMapperProfiles
@@ -43,6 +44,7 @@ namespace DFC.App.JobGroups.AutoMapperProfiles
                 .ForMember(d => d.Keywords, s => s.Ignore());
 
             CreateMap<JobGroupModel, BodyViewModel>()
+                .ForMember(d => d.SourceDateString, s => s.MapFrom(a => a.TransformedDate.ToString("dd MMMM yyyy", CultureInfo.InvariantCulture)))
                 .ForMember(d => d.EmploymentByRegion, s => s.MapFrom(a => a.EmploymentByRegion.FirstOrDefault()))
                 .ForMember(d => d.TopIndustriesInJobGroup, s => s.MapFrom(a => a.TopIndustriesInJobGroup.FirstOrDefault()));
 
