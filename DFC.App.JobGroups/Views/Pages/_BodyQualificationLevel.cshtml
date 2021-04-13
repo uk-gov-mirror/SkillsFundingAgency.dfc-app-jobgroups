@@ -11,7 +11,7 @@
                 <span class="govuk-!-font-size-19">Level</span> @Html.Raw(Model.LevelNumberFromName)
             </div>
             <div class="panel-section-description govuk-grid-column-three-quarters">
-                <p class="govuk-body-m govuk-!-margin-bottom-1">The majority of those employed in this role will hold a BA/BSc degree with honours, degree apprenticeship, graduate diploma, Level @Html.Raw(Model.Name)</p>
+                <partial name="_BodyQualificationLevel_@Model.LevelNumberFromName" />
             </div>
         </div>
     </div>
