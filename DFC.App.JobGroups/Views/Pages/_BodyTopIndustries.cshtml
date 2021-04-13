@@ -6,6 +6,4 @@
 @if (Model?.Breakdown != null && Model.Breakdown.Any())
 {
     <partial name="_BreakdownTable" model="Model.Breakdown" view-data='@new ViewDataDictionary(ViewData) { { "ColumnHeading", "Industries" } }' />
-
-    <partial name="_Source" model="Model.Year" />
 }
