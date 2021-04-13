@@ -303,7 +303,7 @@ stages:
       SpecificationPath: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.OpenApiDocs"
 
 - stage: DeployToPPDraftAppJobGroups
-  condition: succeeded()
+  condition: and(eq(dependencies.DeployToPPAppJobGroups.result,'Succeeded'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   displayName: Deploy to PP-DRAFT_AppJobGroups
   variables:
   - group: dfc-shared-all
@@ -348,7 +348,7 @@ stages:
       SpecificationPath: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.OpenApiDocs"
 
 - stage: DeployToPRDAppJobGroups
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  condition: and(eq(dependencies.DeployToPPDraftAppJobGroups.result,'Succeeded'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   displayName: Deploy to PRD_AppJobGroups
   variables:
   - group: dfc-shared-all
@@ -392,7 +392,7 @@ stages:
       SpecificationPath: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.OpenApiDocs"
 
 - stage: DeployToPRDDraftAppJobGroups
-  condition: succeeded()
+  condition: and(eq(dependencies.DeployToPRDAppJobGroups.result,'Succeeded'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   displayName: Deploy to PRD-DRAFT_AppJobGroups
   variables:
   - group: dfc-shared-all
