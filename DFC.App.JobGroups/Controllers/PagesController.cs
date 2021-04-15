@@ -218,7 +218,7 @@ namespace DFC.App.JobGroups.Controllers
                     new BreadcrumbItemViewModel()
                     {
                         Route = "/",
-                        Title = "Home: Explore careers",
+                        Title = "Home",
                     },
                 },
             };
