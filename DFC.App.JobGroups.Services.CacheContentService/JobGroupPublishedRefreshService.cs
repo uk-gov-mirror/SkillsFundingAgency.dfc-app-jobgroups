@@ -63,6 +63,12 @@ namespace DFC.App.JobGroups.Services.CacheContentService
                 if (existingJobGroup != null)
                 {
                     jobGroupModel.Etag = existingJobGroup.Etag;
+
+                    if (jobGroupModel.Id != existingJobGroup.Id)
+                    {
+                        logger.LogInformation($"Deleting previous Job Groups item: {existingJobGroup.Id} / {jobGroupModel.Soc} / {url}");
+                        await jobGroupDocumentService.DeleteAsync(existingJobGroup.Id).ConfigureAwait(false);
+                    }
                 }
 
                 logger.LogInformation($"Upserting Job Groups item: {jobGroupModel.Soc} / {url}");
