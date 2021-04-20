@@ -104,7 +104,7 @@ steps:
     destinationFolder: '${{ parameters.UIFunctionalTestProjectFolderJobGroups}}'
 
 - powershell: |
-   Copy-Item -Path '${{ parameters.UIFunctionalTestProjectFolderJobGroups }}'\appsettings.template.json -Destination '${{ parameters.UIFunctionalTestProjectFolderJobGroups }}'\appsettings.json
+   Copy-Item -Path $(UIFunctionalTestProjectFolderJobGroups)\appsettings.template.json -Destination $(UIFunctionalTestProjectFolderJobGroups)\appsettings.json
   displayName: 'Copy and convert appsettings.template.json to appsettings.json'
 
 - task: esfadevops.Tokenization.custom-build-task.Tokenization@0
