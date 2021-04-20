@@ -15,7 +15,6 @@ parameters:
   UIFunctionalTestPackageJobGroups: ''
   UIFunctionalTestProjectFolderJobGroups: ''
   UIFunctionalTestCategoryJobGroups: ''
-  UIFunctionalTestsArtifactAlias: ''
 
 steps:
 - checkout: dfc-devops
@@ -105,7 +104,7 @@ steps:
     destinationFolder: '${{ parameters.UIFunctionalTestProjectFolderJobGroups}}'
 
 - powershell: |
-   Copy-Item -Path $(UIFunctionalTestProjectFolderJobGroups)\appsettings.template.json -Destination $(UIFunctionalTestProjectFolderJobGroups)\appsettings.json
+   Copy-Item -Path '${{ parameters.UIFunctionalTestProjectFolderJobGroups }}'\appsettings.template.json -Destination ${{ parameters.UIFunctionalTestProjectFolderJobGroups }}'\appsettings.json
   displayName: 'Copy and convert appsettings.template.json to appsettings.json'
 
 - task: esfadevops.Tokenization.custom-build-task.Tokenization@0
@@ -127,14 +126,14 @@ steps:
      **\*Tests.dll
      !**\*TestAdapter.dll
      !**\obj\**
-    searchFolder: '$(UIFunctionalTestProjectFolderJobGroups)'
-    testFiltercriteria: 'Category=$(UIFunctionalTestCategoryJobGroups)'
+    searchFolder: '${{ parameters.UIFunctionalTestProjectFolderJobGroups }}'
+    testFiltercriteria: 'Category=${{ parameters.UIFunctionalTestCategoryJobGroups }}'
     otherConsoleOptions: '/Framework:.NETCoreApp,Version=v3.1'
   continueOnError: true
 
 - task: DeleteFiles@1
   displayName: 'Delete appsettings.json'
   inputs:
-    SourceFolder: '$(UIFunctionalTestProjectFolderJobGroups)'
+    SourceFolder: '${{ parameters.UIFunctionalTestProjectFolderJobGroups }}'
     Contents: appsettings.json
   condition: always()
