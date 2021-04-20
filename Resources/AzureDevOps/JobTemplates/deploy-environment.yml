@@ -27,6 +27,10 @@ parameters:
   APIMPolicyPath: ''
   ApimImportScript: ''
   SpecificationPath: ''
+  UIFunctionalTestPackageJobGroups: ''
+  UIFunctionalTestProjectFolderJobGroups: ''
+  UIFunctionalTestCategoryJobGroups: ''
+  UIFunctionalTestsArtifactAlias: ''
 
 jobs:
 - deployment: DeployTemplate
@@ -75,6 +79,10 @@ jobs:
             APIMPolicyPath: '${{ parameters.APIMPolicyPath }}'
             ApimImportScript: '${{ parameters.ApimImportScript }}'
             SpecificationPath:  '${{ parameters.SpecificationPath }}'
+            UIFunctionalTestPackageJobGroups: '${{ parameters.UIFunctionalTestPackageJobGroups }}'
+            UIFunctionalTestProjectFolderJobGroups: '${{ parameters.UIFunctionalTestProjectFolderJobGroups }}'
+            UIFunctionalTestCategoryJobGroups: '${{ parameters.UIFunctionalTestCategoryJobGroups }}'
+            UIFunctionalTestsArtifactAlias: '${{ parameters.UIFunctionalTestsArtifactAlias }}'
 
 - deployment: DeployRegistration
   displayName: "Deploy page registration"

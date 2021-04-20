@@ -12,6 +12,10 @@ parameters:
   APIMPolicyPath: ''
   ApimImportScript: ''
   SpecificationPath: ''
+  UIFunctionalTestPackageJobGroups: ''
+  UIFunctionalTestProjectFolderJobGroups: ''
+  UIFunctionalTestCategoryJobGroups: ''
+  UIFunctionalTestsArtifactAlias: ''
 
 steps:
 - checkout: dfc-devops
@@ -93,3 +97,44 @@ steps:
     ScriptPath: '$(Agent.BuildDirectory)/s/dfc-devops/PSCoreScripts/Set-ApimPolicy.ps1'
     ScriptArguments: '-PolicyScope operation -ApimResourceGroup ${{ parameters.SharedResourceGroupName }} -ApimServiceName ${{ parameters.ApimServiceName }} -PolicyFilePath "$(Agent.BuildDirectory)/dfc.app.jobgroups.apimpolicies/ApimPolicy-IsolatedAppServiceAsEventGridWebhookEndpoint.xml" -ApiId ${{ parameters.ApiId }} -OperationId post-api-webhook-receiveevents'
     azurePowerShellVersion: LatestVersion
+
+- task: ExtractFiles@1
+  displayName: Extract files
+  inputs:
+    archiveFilePatterns: '${{ parameters.UIFunctionalTestPackageJobGroups }}'
+    destinationFolder: '${{ parameters.UIFunctionalTestProjectFolderJobGroups}}'
+
+- powershell: |
+   Copy-Item -Path $(UIFunctionalTestProjectFolderJobGroups)\appsettings.template.json -Destination $(UIFunctionalTestProjectFolderJobGroups)\appsettings.json
+  displayName: 'Copy and convert appsettings.template.json to appsettings.json'
+
+- task: esfadevops.Tokenization.custom-build-task.Tokenization@0
+  displayName: 'Tokenization: Transform file appsettings.json'
+  inputs:
+    SourcePath: '${{ parameters.UIFunctionalTestProjectFolderJobGroups }}'
+    TargetFileNames: appsettings.json
+
+- task: esfadevops.Tokenization.custom-build-task.Tokenization@0
+  displayName: 'Tokenization: Transform file appsettings.json'
+  inputs:
+    SourcePath: '${{ parameters.UIFunctionalTestProjectFolderJobGroups }}'
+    TargetFileNames: appsettings.json
+
+- task: VSTest@2
+  displayName: 'VsTest - testAssemblies  (dfc-api-ui-functionaltests-jobgroups)'
+  inputs:
+    testAssemblyVer2: |
+     **\*Tests.dll
+     !**\*TestAdapter.dll
+     !**\obj\**
+    searchFolder: '$(UIFunctionalTestProjectFolderJobGroups)'
+    testFiltercriteria: 'Category=$(UIFunctionalTestCategoryJobGroups)'
+    otherConsoleOptions: '/Framework:.NETCoreApp,Version=v3.1'
+  continueOnError: true
+
+- task: DeleteFiles@1
+  displayName: 'Delete appsettings.json'
+  inputs:
+    SourceFolder: '$(UIFunctionalTestProjectFolderJobGroups)'
+    Contents: appsettings.json
+  condition: always()
