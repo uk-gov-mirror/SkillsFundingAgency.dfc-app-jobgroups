@@ -101,10 +101,10 @@ steps:
   displayName: Extract files
   inputs:
     archiveFilePatterns: '${{ parameters.UIFunctionalTestPackageJobGroups }}'
-    destinationFolder: '${{ parameters.UIFunctionalTestProjectFolderJobGroups}}'
+    destinationFolder: '${{ parameters.UIFunctionalTestProjectFolderJobGroups }}'
 
 - powershell: |
-   Copy-Item -Path $(UIFunctionalTestProjectFolderJobGroups)\appsettings.template.json -Destination $(UIFunctionalTestProjectFolderJobGroups)\appsettings.json
+   Copy-Item -Path $(Pipeline.Workspace)/DFC.APP.JobGroups.UI.FunctionalTests/appsettings.template.json -Destination $(Pipeline.Workspace)/DFC.APP.JobGroups.UI.FunctionalTests/appsettings.json
   displayName: 'Copy and convert appsettings.template.json to appsettings.json'
 
 - task: esfadevops.Tokenization.custom-build-task.Tokenization@0
