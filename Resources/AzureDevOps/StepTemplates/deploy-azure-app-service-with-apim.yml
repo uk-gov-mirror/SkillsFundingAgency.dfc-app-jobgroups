@@ -127,7 +127,7 @@ steps:
      !**\*TestAdapter.dll
      !**\obj\**
     searchFolder: '${{ parameters.UIFunctionalTestProjectFolderJobGroups }}'
-    testFiltercriteria: 'Category='${{ parameters.UIFunctionalTestCategoryJobGroups }}''
+    testFiltercriteria: 'Category=${{ parameters.UIFunctionalTestCategoryJobGroups }}'
     otherConsoleOptions: '/Framework:.NETCoreApp,Version=v3.1'
   continueOnError: true
 
